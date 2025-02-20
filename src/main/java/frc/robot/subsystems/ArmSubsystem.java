@@ -58,9 +58,9 @@ public class ArmSubsystem {
             .idleMode(IdleMode.kBrake);
 
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
+            PersistMode.kPersistParameters);
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters,
-                PersistMode.kPersistParameters);
+            PersistMode.kPersistParameters);
         new Thread( () -> {
             try {
                 Thread.sleep(1000);
@@ -105,16 +105,19 @@ public class ArmSubsystem {
     }
 
     public void setArmSpeed(double pos) {
-        SmartDashboard.putNumber("Arm Position", getArmPos());
-        pos = (pos * 45) + 45;
+        // SmartDashboard.putNumber("Arm Position", getArmPos());
+        // pos = (pos * 45) + 45;
 
         
         
-        SmartDashboard.putNumber("SetPoint", pos);
-        double motorSpeed = armPidController.calculate(getArmPos(), pos);
-        SmartDashboard.putNumber("SetSpeed", motorSpeed);
-        rightMotor.set(motorSpeed);
-        leftMotor.set(motorSpeed);
+        // SmartDashboard.putNumber("SetPoint", pos);
+        // double motorSpeed = armPidController.calculate(getArmPos(), pos);
+        // SmartDashboard.putNumber("SetSpeed", motorSpeed);
+        // rightMotor.set(motorSpeed);
+        // leftMotor.set(motorSpeed);
+
+        rightMotor.set(pos*.5);
+        leftMotor.set(pos*.5);
     }
 
     public void vacOn() {
