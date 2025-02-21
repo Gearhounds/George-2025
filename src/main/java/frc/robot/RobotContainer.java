@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ArmExtensionCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -30,6 +31,7 @@ public class RobotContainer {
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> true));
+    armSubsystem.setDefaultCommand(new ArmExtensionCmd(armSubsystem, () -> opController.getRawButton(5), () -> opController.getRawButton(6)));
       SmartDashboard.putBoolean("Running Robot Container", true);
     configureBindings();
   }
@@ -42,9 +44,9 @@ public class RobotContainer {
     new JoystickButton(opController, 2).whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
     new JoystickButton(opController, 2).whileFalse(Commands.run(() -> armSubsystem.stopArm()));
     
-    new Trigger(() -> opController.getLeftBumperButton()||opController.getRightBumperButton()).whileFalse(Commands.run(() -> armSubsystem.armStay()));
-    new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
-    new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    new Trigger(() -> opController.getLeftBumperButton()||opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
+    // new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
+    // new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
     
     new JoystickButton(opController, 3).whileTrue(Commands.run(() -> armSubsystem.vacOn()));
     new JoystickButton(opController, 3).whileFalse(Commands.run(() -> armSubsystem.vacOff()));

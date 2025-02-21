@@ -14,9 +14,13 @@ public class Constants {
         public static final int kVacMotorID = 41;
         public static final double kArmGearRatio = 1 / 273.28;
 
-        public static final double kP = 0.005;
-        public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double AnglekP = 0.005;
+        public static final double AnglekI = 0;
+        public static final double AnglekD = 0;
+
+        public static final double LengthkP = 0.005;
+        public static final double LengthkI = 0;
+        public static final double LengthkD = 0;
     }
     
     public static final class ModuleConstants {

@@ -16,12 +16,14 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import frc.robot.Constants;
+import frc.robot.MathHelp;
 
-public class ArmSubsystem {
+public class ArmSubsystem extends SubsystemBase{
 
     public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
 
@@ -37,18 +39,25 @@ public class ArmSubsystem {
 
     public final Compressor compressor = new Compressor(21, PneumaticsModuleType.REVPH);
 
-    public final PIDController armPidController = new PIDController(Constants.ArmConstants.kP,
-                                                                    Constants.ArmConstants.kI,
-                                                                    Constants.ArmConstants.kD);
+    public final PIDController armAnglePidController = new PIDController(Constants.ArmConstants.AnglekP,
+                                                                    Constants.ArmConstants.AnglekI,
+                                                                    Constants.ArmConstants.AnglekD);
+
+    public final PIDController armLengthPidController = new PIDController(Constants.ArmConstants.LengthkP,
+                                                                          Constants.ArmConstants.LengthkI,
+                                                                          Constants.ArmConstants.LengthkD);
 
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
 
     public final SparkMax wristMotor = new SparkMax(Constants.ArmConstants.kWristMotorID, MotorType.kBrushed);
+
+    public double extensionPercent = 0;
     public ArmSubsystem() {
         
         compressor.enableAnalog(90, 100);
         
+        // extenderMotor.getEncoder().setPosition(0);
 
         rightConfig
             .inverted(true)
@@ -61,6 +70,10 @@ public class ArmSubsystem {
             PersistMode.kPersistParameters);
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
+
+        armLengthPidController.setTolerance(0.01);
+        
+
         new Thread( () -> {
             try {
                 Thread.sleep(1000);
@@ -76,8 +89,15 @@ public class ArmSubsystem {
         armEncoder.setPosition(0);
     }
 
-    public double getArmPos() {
+    public double getArmAngle() {
         return (armEncoder.getPosition() * Constants.ArmConstants.kArmGearRatio) * 360;
+    }
+
+    public double getArmExtension() {
+        double currentPos = extenderMotor.getEncoder().getPosition();
+        currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
+        currentPos = currentPos < 0 ? 0 : currentPos;
+        return currentPos;
     }
 
     public void stopArm() {
@@ -86,18 +106,22 @@ public class ArmSubsystem {
     }
 
     public void extendArm() {
-        
         // extenderMotor.set(extenderMotor.getEncoder().getPosition() < -375 ? -.01 : -0.4);
         extenderMotor.set(-1);
     }
-
     public void retractArm() {
         // extenderMotor.set(extenderMotor.getEncoder().getPosition() > -50 ? .01 : -0.4);
         extenderMotor.set(1);
     }
 
+    public boolean armExtension(double desiredPosition) {
+        double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
+        extenderMotor.set(pidOutput);
+        return armLengthPidController.atSetpoint();
+    }
+
     public void armStay() {
-        extenderMotor.set(0);
+        extenderMotor.stopMotor();
     }
 
     public void setWristSpeed(double speed) {
