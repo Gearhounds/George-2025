@@ -30,7 +30,7 @@ public class RobotContainer {
   private final JoystickButton opButtonB = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_B);
   private final JoystickButton opButtonX = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_X);
   private final JoystickButton opButtonY = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_Y);
-  private final JoystickButton opButtonRightLittle = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHT_LITTLE);
+  private final JoystickButton opRightLittle = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHT_LITTLE);
   private final JoystickButton opLeftLittle = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFT_LITTLE);
   private final JoystickButton opRightBumper = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHT_BUMPBER);
   private final JoystickButton opLeftBumper = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFT_BUMPER);
@@ -69,7 +69,7 @@ public class RobotContainer {
     opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
     opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
     
-    opButtonRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
+    opRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
 
     opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
     opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
