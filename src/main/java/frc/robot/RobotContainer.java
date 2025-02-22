@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmExtensionCmd;
+import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ToggleClawCmd;
 import frc.robot.subsystems.ArmSubsystem;
@@ -70,8 +71,8 @@ public class RobotContainer {
     
     opButtonRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
 
-    opRightStickDown.whileTrue(Commands.run(() -> armSubsystem.climbOn()));
-    opRightStickDown.whileFalse(Commands.run(() -> armSubsystem.climbOff()));
+    opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
+    opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
   }
 
   public Command getAutonomousCommand() {
