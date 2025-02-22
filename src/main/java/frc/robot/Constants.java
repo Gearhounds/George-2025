@@ -15,15 +15,15 @@ public class Constants {
         public static final int OP_STICK_RIGHT_BUMPBER = 6;
         public static final int OP_STICK_LEFT_LITTLE = 7;
         public static final int OP_STICK_RIGHT_LITTLE = 8;
-        public static final int OP_STICK_LEFTSTICK_DOWN = 10;
-        public static final int OP_STICK_RIGHTSTICK_DOWN = 9;
+        public static final int OP_STICK_LEFTSTICK_DOWN = 9;
+        public static final int OP_STICK_RIGHTSTICK_DOWN = 10;
 
         public static final int OP_STICK_LEFT_X = 0;
         public static final int OP_STICK_LEFT_Y = 1;
+        public static final int OP_STICK_LEFT_TRIGGER = 2;
+        public static final int OP_STICK_RIGHT_TRIGGER = 3;
         public static final int OP_STICK_RIGHT_X = 4;
         public static final int OP_STICK_RIGHT_Y = 5;
-        public static final int OP_STICK_RIGHT_TRIGGER = 3;
-        public static final int OP_STICK_LEFT_TRIGGER = 2;
     };
 
     public static final class ArmConstants {
