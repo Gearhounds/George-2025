@@ -7,15 +7,15 @@ import edu.wpi.first.math.util.Units;
 public class Constants {
 
     public static final class ControlConstants {
-        public static final int OP_STICK_A = 0;
-        public static final int OP_STICK_B = 1;
-        public static final int OP_STICK_X = 2;
-        public static final int OP_STICK_Y = 3;
-        public static final int OP_STICK_LEFT_BUMPER = 4;
-        public static final int OP_STICK_RIGHT_BUMPBER = 5;
-        public static final int OP_STICK_LEFT_LITTLE = 6;
-        public static final int OP_STICK_RIGHT_LITTLE = 7;
-        public static final int OP_STICK_LEFTSTICK_DOWN = 8;
+        public static final int OP_STICK_A = 1;
+        public static final int OP_STICK_B = 2;
+        public static final int OP_STICK_X = 3;
+        public static final int OP_STICK_Y = 4;
+        public static final int OP_STICK_LEFT_BUMPER = 5;
+        public static final int OP_STICK_RIGHT_BUMPBER = 6;
+        public static final int OP_STICK_LEFT_LITTLE = 7;
+        public static final int OP_STICK_RIGHT_LITTLE = 8;
+        public static final int OP_STICK_LEFTSTICK_DOWN = 10;
         public static final int OP_STICK_RIGHTSTICK_DOWN = 9;
 
         public static final int OP_STICK_LEFT_X = 0;
