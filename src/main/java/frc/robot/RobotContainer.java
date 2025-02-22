@@ -39,24 +39,24 @@ public class RobotContainer {
   private void configureBindings() {
     new JoystickButton(driverRight, 1).onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
 
-    new JoystickButton(opController, 1).whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(-opController.getRightY())));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_B).whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(-opController.getRightY())));
     
-    new JoystickButton(opController, 2).whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
-    new JoystickButton(opController, 2).whileFalse(Commands.run(() -> armSubsystem.stopArm()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_X).whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_X).whileFalse(Commands.run(() -> armSubsystem.stopArm()));
     
-    new Trigger(() -> opController.getLeftBumperButton()||opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
+    new Trigger(() -> opController.getLeftBumperButton() || opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
     // new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
     // new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
     
-    new JoystickButton(opController, 3).whileTrue(Commands.run(() -> armSubsystem.vacOn()));
-    new JoystickButton(opController, 3).whileFalse(Commands.run(() -> armSubsystem.vacOff()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_Y).whileTrue(Commands.run(() -> armSubsystem.vacOn()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_Y).whileFalse(Commands.run(() -> armSubsystem.vacOff()));
     
-    new JoystickButton(opController, 7).whileTrue(Commands.run(() -> armSubsystem.clawClose()));
-    new JoystickButton(opController, 8).whileTrue(Commands.run(() -> armSubsystem.clawOpen()));
-    new Trigger(() -> opController.getRawButton(7)||opController.getRawButton(8)).whileFalse(Commands.run(() -> armSubsystem.clawOff()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHT_LITTLE).whileTrue(Commands.run(() -> armSubsystem.clawClose()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHT_LITTLE).whileTrue(Commands.run(() -> armSubsystem.clawOpen()));
+    new Trigger(() -> opController.getRawButton(Constants.ControlConstants.OP_STICK_RIGHT_LITTLE) || opController.getRawButton(Constants.ControlConstants.OP_STICK_LEFT_LITTLE)).whileFalse(Commands.run(() -> armSubsystem.clawOff()));
 
-    new JoystickButton(opController, 9).whileTrue(Commands.run(() -> armSubsystem.climbOn()));
-    new JoystickButton(opController, 9).whileFalse(Commands.run(() -> armSubsystem.climbOff()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHTSTICK_DOWN).whileTrue(Commands.run(() -> armSubsystem.climbOn()));
+    new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHTSTICK_DOWN).whileFalse(Commands.run(() -> armSubsystem.climbOff()));
   }
 
   public Command getAutonomousCommand() {
