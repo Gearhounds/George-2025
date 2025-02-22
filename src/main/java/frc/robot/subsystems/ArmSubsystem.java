@@ -52,9 +52,9 @@ public class ArmSubsystem extends SubsystemBase{
 
     public final SparkMax wristMotor = new SparkMax(Constants.ArmConstants.kWristMotorID, MotorType.kBrushed);
 
-    public double extensionPercent = 0;
+    public double desiredPosition;
     public ArmSubsystem() {
-        
+        desiredPosition = 0;
         compressor.enableAnalog(90, 100);
         
         // extenderMotor.getEncoder().setPosition(0);
@@ -71,7 +71,7 @@ public class ArmSubsystem extends SubsystemBase{
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
 
-        armLengthPidController.setTolerance(0.01);
+        armLengthPidController.setTolerance(0.001);
         
 
         new Thread( () -> {
@@ -114,10 +114,13 @@ public class ArmSubsystem extends SubsystemBase{
         extenderMotor.set(1);
     }
 
-    public boolean armExtension(double desiredPosition) {
+    
+    public void runToPos() {
         double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
-        extenderMotor.set(pidOutput);
-        return armLengthPidController.atSetpoint();
+        extenderMotor.set(-pidOutput);
+        SmartDashboard.putNumber("desired position", desiredPosition);
+        SmartDashboard.putNumber("current position", getArmExtension());
+        SmartDashboard.putNumber("pid output", pidOutput);
     }
 
     public void armStay() {

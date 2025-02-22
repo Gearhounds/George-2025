@@ -9,34 +9,31 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ArmExtensionCmd extends Command {
     
     private final ArmSubsystem armSystem;
-    private final Supplier<Boolean> shouldRetract, shouldExtend;
+    private double setPosPercent;
 
     
     private boolean isDone = false;
     
-    public ArmExtensionCmd (ArmSubsystem armSubsystem, Supplier<Boolean> retract, Supplier<Boolean> extend) {
+    public ArmExtensionCmd (ArmSubsystem armSubsystem, Supplier<Double> percent) {
 
         armSystem = armSubsystem;
-        shouldRetract = retract;
-        shouldExtend = extend;
+        setPosPercent = percent.get();
         addRequirements(armSystem);
     }
 
     @Override
     public void initialize() {
-        if (shouldRetract.get() && armSystem.extensionPercent != 0) {
-            System.out.println("Retracting");
-            armSystem.extensionPercent -= .1;
-        }
-        if (shouldExtend.get() && armSystem.extensionPercent != 1) {
-            System.out.println("Extending");
-            armSystem.extensionPercent += .1;
+        if (setPosPercent < 0 || setPosPercent > 1) {
+            // dont allow invalid %
+            setPosPercent = armSystem.getArmExtension();
+        } else {
+            armSystem.desiredPosition = setPosPercent;
         }
     }
 
     @Override
     public void execute() {
-        isDone = armSystem.armExtension(armSystem.extensionPercent);
+        armSystem.runToPos();
     }
 
     @Override
@@ -45,7 +42,7 @@ public class ArmExtensionCmd extends Command {
     @Override
     public boolean isFinished() {
         // System.out.println("CMD Done");
-        return isDone;
+        return armSystem.armLengthPidController.atSetpoint();
     }
 
 }

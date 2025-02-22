@@ -24,6 +24,9 @@ public class Constants {
         public static final int OP_STICK_RIGHT_TRIGGER = 3;
         public static final int OP_STICK_RIGHT_X = 4;
         public static final int OP_STICK_RIGHT_Y = 5;
+
+        public static final int OP_STICK_DPAD_UP = 0;
+        public static final int OP_STICK_DPAD_DOWN = 180;
     };
 
     public static final class ArmConstants {
@@ -38,7 +41,7 @@ public class Constants {
         public static final double AnglekI = 0;
         public static final double AnglekD = 0;
 
-        public static final double LengthkP = 0.005;
+        public static final double LengthkP = 5;
         public static final double LengthkI = 0;
         public static final double LengthkD = 0;
     }
