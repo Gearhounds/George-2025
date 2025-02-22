@@ -44,7 +44,7 @@ public class ArmExtensionCmd extends Command {
 
     @Override
     public boolean isFinished() {
-        System.out.println("CMD Done");
+        // System.out.println("CMD Done");
         return isDone;
     }
 

@@ -11,16 +11,16 @@ public class ToggleClawCmd extends Command {
     
     public ToggleClawCmd (ArmSubsystem armSubsystem) {
         armSystem = armSubsystem;
-        isOpen = armSystem.clawSolenoid.get() == DoubleSolenoid.Value.kForward;
         addRequirements(armSystem);
     }
 
     @Override
     public void initialize() {
-        if (armSystem.clawSolenoid.get() == DoubleSolenoid.Value.kForward) {
-            armSystem.clawSolenoid.set(DoubleSolenoid.Value.kReverse);
+        isOpen = armSystem.clawSolenoid.get() == DoubleSolenoid.Value.kReverse;
+        if (isOpen) {
+            armSystem.clawClose();
         } else {
-            armSystem.clawSolenoid.set(DoubleSolenoid.Value.kForward);
+            armSystem.clawOpen();
         }
     }
 

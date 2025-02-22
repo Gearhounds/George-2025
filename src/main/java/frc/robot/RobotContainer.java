@@ -54,7 +54,7 @@ public class RobotContainer {
   private void configureBindings() {
     new JoystickButton(driverRight, 1).onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
 
-    opButtonB.whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(-opController.getRightY())));
+    opButtonB.whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(opController.getRightY())));
 
     opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
     opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
