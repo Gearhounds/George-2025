@@ -36,7 +36,8 @@ public class RobotContainer {
   private final JoystickButton opLeftBumper = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFT_BUMPER);
   private final JoystickButton opRightStickDown = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHTSTICK_DOWN);
   private final JoystickButton opLeftStickDown = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFTSTICK_DOWN);
-
+  private final Trigger opDPadUp = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_UP);
+  private final Trigger opDPadDown = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_DOWN);
 
   public RobotContainer() {
     opController.getLeftY();
@@ -46,7 +47,7 @@ public class RobotContainer {
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> true));
-    armSubsystem.setDefaultCommand(new ArmExtensionCmd(armSubsystem, () -> opController.getRawButton(5), () -> opController.getRawButton(6)));
+    // armSubsystem.setDefaultCommand(new ArmExtensionCmd(armSubsystem, () -> 0.0));
       SmartDashboard.putBoolean("Running Robot Container", true);
     configureBindings();
   }
@@ -54,12 +55,15 @@ public class RobotContainer {
   private void configureBindings() {
     new JoystickButton(driverRight, 1).onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
 
+
+    opDPadUp.onTrue(new ArmExtensionCmd(armSubsystem, () -> .9));
+
     opButtonB.whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(opController.getRightY())));
 
     opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
     opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
     
-    new Trigger(() -> opController.getLeftBumperButton() || opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
+    // new Trigger(() -> opController.getLeftBumperButton() || opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
     // new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
     // new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
 
@@ -71,8 +75,10 @@ public class RobotContainer {
     
     opRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
 
-    opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
-    opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
+    opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
+    opLeftStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
+    // opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
+    // opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
   }
 
   public Command getAutonomousCommand() {
