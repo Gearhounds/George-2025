@@ -6,8 +6,6 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
 
-
-
     public static final class ControlConstants {
         public static final int OP_STICK_A = 0;
         public static final int OP_STICK_B = 1;
