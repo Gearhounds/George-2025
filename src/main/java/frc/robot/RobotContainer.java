@@ -74,6 +74,7 @@ public class RobotContainer {
     opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
     
     opRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
+    opRightLittle.onFalse(Commands.run(() -> armSubsystem.clawOff()));
 
     opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
     opLeftStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
