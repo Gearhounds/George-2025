@@ -86,9 +86,17 @@ public class SwerveModule {
             return driveEncoder.getPosition();
         }
 
+        public double getDriveDistance() {
+            return driveEncoder.getPosition() * ModuleConstants.kDriveEncoderRot2Meter;
+        }
+
         public double getTurningPosition() {
             SmartDashboard.putBoolean("Running Get Turn Position", true);
             return turningEncoder.getPosition();
+        }
+
+        public double getWheelAngleDeg() {
+            return absEncoder.getPosition() * ModuleConstants.kTurningMotorGearRatio;
         }
 
         public double getDriveVelocity() {
@@ -102,8 +110,7 @@ public class SwerveModule {
         }
 
         public double getAbsEncoder() {
-            
-            double angle = (absEncoder.getPosition() * 360)-180;
+            double angle = (absEncoder.getPosition() * 360) - 180;
             return angle * (absEncoderReversed ? -1 : 1);
         }
 
@@ -140,4 +147,5 @@ public class SwerveModule {
             driveMotor.set(0);
             turningMotor.set(0);
         }
+
 }
