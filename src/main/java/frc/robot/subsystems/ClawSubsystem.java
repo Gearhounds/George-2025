@@ -2,14 +2,18 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.MathHelp;
 
-public class ClawSubsytem extends SubsystemBase {
+public class ClawSubsystem extends SubsystemBase {
     SparkMax wristMotor = new SparkMax(Constants.ArmConstants.kWristMotorID, MotorType.kBrushed);
     SparkMaxConfig wristConfig = new SparkMaxConfig();
 
@@ -19,8 +23,8 @@ public class ClawSubsytem extends SubsystemBase {
                                                                           Constants.ArmConstants.WristkI,
                                                                           Constants.ArmConstants.WristkD);
 
-    double desiredPosition;
-    public ClawSubsytem () {
+    public double desiredPosition;
+    public ClawSubsystem () {
         desiredPosition = 0;
         wristConfig
             .inverted(false)
@@ -38,10 +42,10 @@ public class ClawSubsytem extends SubsystemBase {
     }
 
     public void runToPos() {
-        double pidOutput = armLengthPidController.calculate(getWristPosition(), desiredPosition);
-        extenderMotor.set(pidOutput);
+        double pidOutput = wristPidController.calculate(getWristPosition(), desiredPosition);
+        wristMotor.set(pidOutput);
         SmartDashboard.putNumber("desired position", desiredPosition);
-        SmartDashboard.putNumber("current position", getArmExtension());
+        SmartDashboard.putNumber("current position", getWristPosition());
         SmartDashboard.putNumber("pid output", pidOutput);
     }
 }

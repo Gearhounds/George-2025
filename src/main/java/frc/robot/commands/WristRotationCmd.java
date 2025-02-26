@@ -5,20 +5,21 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 
 public class WristRotationCmd extends Command {
     
-    private final ArmSubsystem clawSystem;
+    private final ClawSubsystem clawSystem;
     private double setPosPercent;
 
     
     private boolean isDone = false;
     
-    public WristRotationCmd (ClawSubsytem clawSubsystem, Supplier<Double> percent) {
+    public WristRotationCmd (ClawSubsystem clawSubsystem, Supplier<Double> percent) {
 
         clawSystem = clawSubsystem;
         setPosPercent = percent.get();
-        addRequirements(armSystem);
+        addRequirements(clawSystem);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class WristRotationCmd extends Command {
     @Override
     public boolean isFinished() {
         // System.out.println("CMD Done");
-        return armSystem.armLengthPidController.atSetpoint();
+        return clawSystem.wristPidController.atSetpoint();
     }
 
 }

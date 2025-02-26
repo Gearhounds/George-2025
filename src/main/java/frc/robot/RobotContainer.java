@@ -15,12 +15,15 @@ import frc.robot.commands.ArmExtensionCmd;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ToggleClawCmd;
+import frc.robot.commands.WristRotationCmd;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ClawSubsystem clawSubsytem = new ClawSubsystem();
 
   private final XboxController opController = new XboxController(0);
   private final Joystick driverLeft = new Joystick(1);
@@ -73,7 +76,8 @@ public class RobotContainer {
     opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
     opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
     
-    opRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
+    opLeftLittle.onTrue(new WristRotationCmd(clawSubsytem, () -> 0.1));
+    opLeftLittle.onTrue(new WristRotationCmd(clawSubsytem, () -> 0.9));
     opRightLittle.onFalse(Commands.run(() -> armSubsystem.clawOff()));
 
     opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
