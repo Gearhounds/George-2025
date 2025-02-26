@@ -23,7 +23,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem();
-  private final ClawSubsystem clawSubsytem = new ClawSubsystem();
+  private final ClawSubsystem clawSubsystem = new ClawSubsystem();
 
   private final XboxController opController = new XboxController(0);
   private final Joystick driverLeft = new Joystick(1);
@@ -61,7 +61,7 @@ public class RobotContainer {
 
     opDPadUp.onTrue(new ArmExtensionCmd(armSubsystem, () -> .9));
 
-    opButtonB.whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(opController.getRightY())));
+    opButtonB.whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController.getRightY())));
 
     opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
     opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
@@ -76,9 +76,9 @@ public class RobotContainer {
     opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
     opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
     
-    opLeftLittle.onTrue(new WristRotationCmd(clawSubsytem, () -> 0.1));
-    opLeftLittle.onTrue(new WristRotationCmd(clawSubsytem, () -> 0.9));
-    opRightLittle.onFalse(Commands.run(() -> armSubsystem.clawOff()));
+    opLeftLittle.onTrue(new WristRotationCmd(clawSubsystem, () -> 0.1));
+    opRightLittle.onTrue(new WristRotationCmd(clawSubsystem, () -> 0.9));
+    // opRightLittle.onFalse(Commands.run(() -> armSubsystem.clawOff()));
 
     opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
     opLeftStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));

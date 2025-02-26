@@ -45,7 +45,7 @@ public class Constants {
         public static final double LengthkI = 0;
         public static final double LengthkD = 0;
 
-        public static final double WristkP = 0.005;
+        public static final double WristkP = 5;
         public static final double WristkI = 0;
         public static final double WristkD = 0;
     }

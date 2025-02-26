@@ -50,7 +50,7 @@ public class ArmSubsystem extends SubsystemBase{
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
 
-    public final SparkMax wristMotor = new SparkMax(Constants.ArmConstants.kWristMotorID, MotorType.kBrushed);
+    
 
     public double desiredPosition;
     public ArmSubsystem() {
@@ -127,9 +127,7 @@ public class ArmSubsystem extends SubsystemBase{
         extenderMotor.stopMotor();
     }
 
-    public void setWristSpeed(double speed) {
-        wristMotor.set(speed);
-    }
+    
 
     public void setArmSpeed(double pos) {
         // SmartDashboard.putNumber("Arm Position", getArmPos());

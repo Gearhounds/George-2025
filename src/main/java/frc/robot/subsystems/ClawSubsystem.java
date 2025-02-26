@@ -34,18 +34,23 @@ public class ClawSubsystem extends SubsystemBase {
         wristPidController.setTolerance(0.01);
     }
 
+    public void setWristSpeed(double speed) {
+        wristMotor.set(speed); 
+    }
+
     public double getWristPosition() {
-        double currentPos = wristMotor.getEncoder().getPosition();
+        double currentPos = -wristMotor.getEncoder().getPosition();
         currentPos = MathHelp.map(currentPos, 0, .600000023, 0, 1);
-        currentPos = currentPos < 0 ? 0 : currentPos;
+        // currentPos = currentPos < 0 ? 0 : currentPos;
         return currentPos;
     }
 
     public void runToPos() {
         double pidOutput = wristPidController.calculate(getWristPosition(), desiredPosition);
-        wristMotor.set(pidOutput);
-        SmartDashboard.putNumber("desired position", desiredPosition);
-        SmartDashboard.putNumber("current position", getWristPosition());
-        SmartDashboard.putNumber("pid output", pidOutput);
+        pidOutput = pidOutput < 0 ? pidOutput/2 : pidOutput;
+        wristMotor.set(-pidOutput);
+        SmartDashboard.putNumber("claw desired position", desiredPosition);
+        SmartDashboard.putNumber("claw current position", getWristPosition());
+        SmartDashboard.putNumber("claw pid output", pidOutput);
     }
 }
