@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmExtensionCmd;
+import frc.robot.commands.ArmRotationCmd;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ToggleClawCmd;
@@ -70,8 +71,10 @@ public class RobotContainer {
     // new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
     // new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
 
-    opLeftBumper.whileTrue(Commands.run(() -> armSubsystem.retractArm()));
-    opRightBumper.whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    // opLeftBumper.whileTrue(Commands.run(() -> armSubsystem.retractArm()));
+    // opRightBumper.whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    opLeftBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.9));
+    opRightBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.1));
 
     opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
     opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));

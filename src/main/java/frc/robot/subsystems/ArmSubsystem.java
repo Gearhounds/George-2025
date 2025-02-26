@@ -1,25 +1,23 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.revrobotics.spark.config.SparkFlexConfig;
-
 import frc.robot.Constants;
 import frc.robot.MathHelp;
 
@@ -53,8 +51,10 @@ public class ArmSubsystem extends SubsystemBase{
     
 
     public double desiredPosition;
+    public double desiredAngle;
     public ArmSubsystem() {
         desiredPosition = 0;
+        desiredAngle = 0;
         compressor.enableAnalog(90, 100);
         
         // extenderMotor.getEncoder().setPosition(0);
@@ -90,7 +90,10 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public double getArmAngle() {
-        return (armEncoder.getPosition() * Constants.ArmConstants.kArmGearRatio) * 360;
+        double currentArmAngle = armEncoder.getPosition();
+        currentArmAngle = MathHelp.map(currentArmAngle, -40, 17, 0, 1);
+        // currentArmAngle = currentArmAngle < 0 ? 0 : currentArmAngle;
+        return currentArmAngle;
     }
 
     public double getArmExtension() {
@@ -118,9 +121,9 @@ public class ArmSubsystem extends SubsystemBase{
     public void runToPos() {
         double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
         extenderMotor.set(-pidOutput);
-        SmartDashboard.putNumber("desired position", desiredPosition);
-        SmartDashboard.putNumber("current position", getArmExtension());
-        SmartDashboard.putNumber("pid output", pidOutput);
+        SmartDashboard.putNumber("arm desired position", desiredPosition);
+        SmartDashboard.putNumber("arm current position", getArmExtension());
+        SmartDashboard.putNumber("arm pid output", pidOutput);
     }
 
     public void armStay() {
@@ -130,19 +133,19 @@ public class ArmSubsystem extends SubsystemBase{
     
 
     public void setArmSpeed(double pos) {
-        // SmartDashboard.putNumber("Arm Position", getArmPos());
-        // pos = (pos * 45) + 45;
-
         
-        
-        // SmartDashboard.putNumber("SetPoint", pos);
-        // double motorSpeed = armPidController.calculate(getArmPos(), pos);
-        // SmartDashboard.putNumber("SetSpeed", motorSpeed);
-        // rightMotor.set(motorSpeed);
-        // leftMotor.set(motorSpeed);
 
         rightMotor.set(pos*.5);
         leftMotor.set(pos*.5);
+    }
+
+    public void setArmPos() {
+        double pidOutput = armAnglePidController.calculate(getArmAngle(), desiredAngle);
+        pidOutput = pidOutput < 0 ? pidOutput/2 : pidOutput;
+        rightMotor.set(-pidOutput);
+        SmartDashboard.putNumber("claw desired position", desiredAngle);
+        SmartDashboard.putNumber("claw current position", getArmAngle());
+        SmartDashboard.putNumber("claw pid output", pidOutput);
     }
 
     public void vacOn() {

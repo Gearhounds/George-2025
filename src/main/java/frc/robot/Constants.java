@@ -37,7 +37,7 @@ public class Constants {
         public static final int kVacMotorID = 41;
         public static final double kArmGearRatio = 1 / 273.28;
 
-        public static final double AnglekP = 0.005;
+        public static final double AnglekP = 1;
         public static final double AnglekI = 0;
         public static final double AnglekD = 0;
 
