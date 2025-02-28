@@ -73,14 +73,7 @@ public class ArmSubsystem extends SubsystemBase{
 
         armLengthPidController.setTolerance(0.001);
         
-
-        new Thread( () -> {
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                zeroArmPos();
-            }
-        });
+        zeroArmPos();
     }
 
     
@@ -117,7 +110,6 @@ public class ArmSubsystem extends SubsystemBase{
         extenderMotor.set(1);
     }
 
-    
     public void runToPos() {
         double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
         extenderMotor.set(-pidOutput);
@@ -130,11 +122,7 @@ public class ArmSubsystem extends SubsystemBase{
         extenderMotor.stopMotor();
     }
 
-    
-
     public void setArmSpeed(double pos) {
-        
-
         rightMotor.set(pos*.5);
         leftMotor.set(pos*.5);
     }
@@ -142,10 +130,11 @@ public class ArmSubsystem extends SubsystemBase{
     public void setArmPos() {
         double pidOutput = armAnglePidController.calculate(getArmAngle(), desiredAngle);
         pidOutput = pidOutput < 0 ? pidOutput/2 : pidOutput;
-        rightMotor.set(-pidOutput);
-        SmartDashboard.putNumber("claw desired position", desiredAngle);
-        SmartDashboard.putNumber("claw current position", getArmAngle());
-        SmartDashboard.putNumber("claw pid output", pidOutput);
+        rightMotor.set(pidOutput);
+        leftMotor.set(pidOutput);
+        SmartDashboard.putNumber("arm desired position", desiredAngle);
+        SmartDashboard.putNumber("arm current position", getArmAngle());
+        SmartDashboard.putNumber("arm pid output", pidOutput);
     }
 
     public void vacOn() {

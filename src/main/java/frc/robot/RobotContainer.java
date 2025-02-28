@@ -42,9 +42,14 @@ public class RobotContainer {
   private final JoystickButton opLeftStickDown = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFTSTICK_DOWN);
   private final Trigger opDPadUp = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_UP);
   private final Trigger opDPadDown = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_DOWN);
+  private final JoystickButton driverRightRed = new JoystickButton(driverRight, 3);
+  private final JoystickButton driverLeftRed = new JoystickButton(driverLeft, 3);
+
+  private boolean isAutoControl = false;
 
   public RobotContainer() {
     opController.getLeftY();
+    
     swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
       swerveSubsystem,
       () -> driverLeft.getRawAxis(1), 
@@ -57,36 +62,47 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    // Toggle Auto Control
+    opButtonA.onTrue(Commands.run(() -> isAutoControl = !isAutoControl));
+
+    // Zero robot yaw
     new JoystickButton(driverRight, 1).onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-
-
-    opDPadUp.onTrue(new ArmExtensionCmd(armSubsystem, () -> .9));
-
-    opButtonB.whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController.getRightY())));
-
-    opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
-    opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
     
-    // new Trigger(() -> opController.getLeftBumperButton() || opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
-    // new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
-    // new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    // Always run arm pid
+    new Trigger(() -> true).whileTrue(Commands.run(() -> armSubsystem.setArmPos()));
+
+    // opButtonB.whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController.getRightY())));
+
+    // opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
+    // opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
+    
 
     // opLeftBumper.whileTrue(Commands.run(() -> armSubsystem.retractArm()));
     // opRightBumper.whileTrue(Commands.run(() -> armSubsystem.extendArm()));
-    opLeftBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.9));
-    opRightBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.1));
 
-    opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
-    opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
-    
+    // Arm Rotation Setpoints
+    opLeftBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.0));
+    opRightBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.75));
+
+    // Wrist Rotation Setpoints
     opLeftLittle.onTrue(new WristRotationCmd(clawSubsystem, () -> 0.1));
     opRightLittle.onTrue(new WristRotationCmd(clawSubsystem, () -> 0.9));
-    // opRightLittle.onFalse(Commands.run(() -> armSubsystem.clawOff()));
 
+    // Arm Extension Setpoints
     opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
     opLeftStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
-    // opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
-    // opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
+
+    // Open and Close Claw
+    driverLeftRed.whileTrue(Commands.run(() -> armSubsystem.clawOpen()));
+    driverLeftRed.whileFalse(Commands.run(() -> armSubsystem.clawClose()));
+
+    // Run vacuum
+    opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
+    opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
+
+    // Open and Close Climb
+    opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
+    opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
   }
 
   public Command getAutonomousCommand() {

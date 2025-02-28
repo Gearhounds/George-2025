@@ -26,6 +26,7 @@ public class ToggleClawCmd extends Command {
 
     @Override
     public void execute() {
+        // armSystem.clawOff();
         isDone = true;
     }
 

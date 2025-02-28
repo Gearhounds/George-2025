@@ -36,12 +36,14 @@ public class ArmRotationCmd extends Command {
     }
 
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        armSystem.stopArm();
+    }
 
     @Override
     public boolean isFinished() {
         // System.out.println("CMD Done");
-        return armSystem.armAnglePidController.atSetpoint();
+        return false;
     }
 
 }
