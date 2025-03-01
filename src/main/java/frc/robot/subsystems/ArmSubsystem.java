@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -64,13 +65,15 @@ public class ArmSubsystem extends SubsystemBase{
             .idleMode(IdleMode.kBrake);
         leftConfig
             .inverted(false)
-            .idleMode(IdleMode.kBrake);
+            .idleMode(IdleMode.kBrake)
+            .follow(rightMotor, true);
 
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
 
+        
         armLengthPidController.setTolerance(0.001);
         
         zeroArmPos();
@@ -109,8 +112,12 @@ public class ArmSubsystem extends SubsystemBase{
         // extenderMotor.set(extenderMotor.getEncoder().getPosition() > -50 ? .01 : -0.4);
         extenderMotor.set(1);
     }
-
-    public void runToPos() {
+    
+    public void manualArmExtension(double speed) {
+        extenderMotor.set(speed);
+    }
+    // Auto Control for Arm Extension
+    public void setArmExtensionPos() {
         double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
         extenderMotor.set(-pidOutput);
         SmartDashboard.putNumber("arm desired position", desiredPosition);
@@ -118,20 +125,21 @@ public class ArmSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("arm pid output", pidOutput);
     }
 
-    public void armStay() {
+    public void armExtensionStop() {
         extenderMotor.stopMotor();
     }
 
-    public void setArmSpeed(double pos) {
-        rightMotor.set(pos*.5);
-        leftMotor.set(pos*.5);
+    // Manual Control of Arm Angle
+    public void setArmAngleSpeed(XboxController controller) {
+        rightMotor.set(-controller.getLeftY()*.5);
+        // leftMotor.set(controller.getLeftY()*.5);
     }
 
-    public void setArmPos() {
+    public void setArmAnglePos() {
         double pidOutput = armAnglePidController.calculate(getArmAngle(), desiredAngle);
         pidOutput = pidOutput < 0 ? pidOutput/2 : pidOutput;
         rightMotor.set(pidOutput);
-        leftMotor.set(pidOutput);
+        // leftMotor.set(pidOutput);
         SmartDashboard.putNumber("arm desired position", desiredAngle);
         SmartDashboard.putNumber("arm current position", getArmAngle());
         SmartDashboard.putNumber("arm pid output", pidOutput);

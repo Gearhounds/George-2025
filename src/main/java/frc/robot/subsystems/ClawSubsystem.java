@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,8 +35,8 @@ public class ClawSubsystem extends SubsystemBase {
         wristPidController.setTolerance(0.01);
     }
 
-    public void setWristSpeed(double speed) {
-        wristMotor.set(speed); 
+    public void setWristSpeed(XboxController controller) {
+        wristMotor.set(controller.getRightY()); 
     }
 
     public double getWristPosition() {

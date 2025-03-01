@@ -32,7 +32,7 @@ public class ArmRotationCmd extends Command {
 
     @Override
     public void execute() {
-        armSystem.setArmPos();
+        armSystem.setArmAnglePos();
     }
 
     @Override

@@ -33,7 +33,7 @@ public class ArmExtensionCmd extends Command {
 
     @Override
     public void execute() {
-        armSystem.runToPos();
+        armSystem.setArmExtensionPos();
     }
 
     @Override

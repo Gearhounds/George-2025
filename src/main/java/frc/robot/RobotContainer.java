@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,7 +46,14 @@ public class RobotContainer {
   private final JoystickButton driverRightRed = new JoystickButton(driverRight, 3);
   private final JoystickButton driverLeftRed = new JoystickButton(driverLeft, 3);
 
-  private boolean isAutoControl = false;
+  public DigitalInput clawSen = new DigitalInput(6);
+  private final Trigger clawSensor = new Trigger(() -> clawSen.get());
+  public DigitalInput armSen = new DigitalInput(9);
+  private final Trigger armSensor = new Trigger(() -> !armSen.get());
+
+  private final Trigger extensionStopped = new Trigger(() -> !(opLeftBumper.getAsBoolean() || opRightBumper.getAsBoolean()));
+
+  private boolean isAutoControl = true;
 
   public RobotContainer() {
     opController.getLeftY();
@@ -56,45 +64,69 @@ public class RobotContainer {
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> true));
-    // armSubsystem.setDefaultCommand(new ArmExtensionCmd(armSubsystem, () -> 0.0));
-      SmartDashboard.putBoolean("Running Robot Container", true);
+
+  
     configureBindings();
   }
 
   private void configureBindings() {
-    // Toggle Auto Control
-    opButtonA.onTrue(Commands.run(() -> isAutoControl = !isAutoControl));
-
     // Zero robot yaw
-    new JoystickButton(driverRight, 1).onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+    driverRightRed.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+
+    // Toggle between manual and auto control
+    opButtonA.onTrue(Commands.runOnce(() -> isAutoControl = !isAutoControl));
     
     // Always run arm pid
-    new Trigger(() -> true).whileTrue(Commands.run(() -> armSubsystem.setArmPos()));
-
-    // opButtonB.whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController.getRightY())));
-
-    // opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
-    // opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
+    new Trigger(() -> true && isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAnglePos()));
+      
     
-
-    // opLeftBumper.whileTrue(Commands.run(() -> armSubsystem.retractArm()));
-    // opRightBumper.whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    
+    // Bindings for Auto Control
 
     // Arm Rotation Setpoints
-    opLeftBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.0));
-    opRightBumper.onTrue(new ArmRotationCmd(armSubsystem, () -> 0.75));
+    opLeftBumper.and(() -> isAutoControl).onTrue(new ArmRotationCmd(armSubsystem, () -> 0.0));
+    opRightBumper.and(() -> isAutoControl).onTrue(new ArmRotationCmd(armSubsystem, () -> 0.75));
 
     // Wrist Rotation Setpoints
-    opLeftLittle.onTrue(new WristRotationCmd(clawSubsystem, () -> 0.1));
-    opRightLittle.onTrue(new WristRotationCmd(clawSubsystem, () -> 0.9));
+    opLeftLittle.and(() -> isAutoControl).onTrue(new WristRotationCmd(clawSubsystem, () -> 0.1));
+    opRightLittle.and(() -> isAutoControl).onTrue(new WristRotationCmd(clawSubsystem, () -> 0.9));
 
     // Arm Extension Setpoints
-    opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
-    opLeftStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
+    opRightStickDown.and(() -> isAutoControl).onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
+    opLeftStickDown.and(() -> isAutoControl).onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
 
+    // End Auto Controls
+
+
+    // Manual Controls
+
+    // Manual Arm Rotation Control
+    new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
+
+    // Manual Wrist Rotation Control
+    new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
+
+    // Manual Extension Control
+    // opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
+    // opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    
+    opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
+    opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    extensionStopped.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
+    // End Manual Controls
+
+
+
+
+    // Start Controls
+
+    // Stop Arm
+    armSensor.onTrue(Commands.runOnce(() -> armSubsystem.stopArm()));
+    
     // Open and Close Claw
-    driverLeftRed.whileTrue(Commands.run(() -> armSubsystem.clawOpen()));
-    driverLeftRed.whileFalse(Commands.run(() -> armSubsystem.clawClose()));
+    clawSensor.onTrue(Commands.runOnce(() -> armSubsystem.clawOpen()));
+    clawSensor.onFalse(Commands.runOnce(() -> armSubsystem.clawClose()));
+    // clawSensor.whileFalse(Commands.runOnce(() -> armSubsystem.clawOff()));
 
     // Run vacuum
     opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));

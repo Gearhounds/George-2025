@@ -11,8 +11,6 @@ public class WristRotationCmd extends Command {
     private double setPosPercent;
 
     
-    private boolean isDone = false;
-    
     public WristRotationCmd (ClawSubsystem clawSubsystem, Supplier<Double> percent) {
 
         clawSystem = clawSubsystem;
