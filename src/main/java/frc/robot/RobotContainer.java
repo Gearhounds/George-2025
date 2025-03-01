@@ -81,29 +81,29 @@ public class RobotContainer {
   private void configureBindings() {
     // Zero robot yaw
     // driverRightRed.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
-    // driverRightRed.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+    driverRightRed.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
 
     // Toggle between manual and auto control
     opButtonA.onTrue(Commands.runOnce(() -> isAutoControl = !isAutoControl));
     
     // Always run arm pid
-    // new Trigger(() -> true && isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAnglePos()));
+    new Trigger(() -> true && isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAnglePos()));
       
     
     
     // Bindings for Auto Control
 
     // // Arm Rotation Setpoints
-    // opLeftBumper.and(() -> isAutoControl).onTrue(new ArmRotationCmd(armSubsystem, () -> 0.0));
-    // opRightBumper.and(() -> isAutoControl).onTrue(new ArmRotationCmd(armSubsystem, () -> 0.75));
+    opLeftBumper.and(() -> isAutoControl).onTrue(new ArmRotationCmd(armSubsystem, () -> 0.0));
+    opRightBumper.and(() -> isAutoControl).onTrue(new ArmRotationCmd(armSubsystem, () -> 0.75));
 
     // // Wrist Rotation Setpoints
-    // opLeftLittle.and(() -> isAutoControl).onTrue(new WristRotationCmd(clawSubsystem, () -> 0.1));
-    // opRightLittle.and(() -> isAutoControl).onTrue(new WristRotationCmd(clawSubsystem, () -> 0.9));
+    opLeftLittle.and(() -> isAutoControl).onTrue(new WristRotationCmd(clawSubsystem, () -> 0.1));
+    opRightLittle.and(() -> isAutoControl).onTrue(new WristRotationCmd(clawSubsystem, () -> 0.9));
 
     // // Arm Extension Setpoints
-    // opRightStickDown.and(() -> isAutoControl).onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
-    // opLeftStickDown.and(() -> isAutoControl).onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
+    opRightStickDown.and(() -> isAutoControl).onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
+    opLeftStickDown.and(() -> isAutoControl).onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
 
     // End Auto Controls
 
@@ -111,23 +111,23 @@ public class RobotContainer {
     // Manual Controls
 
     // Manual Arm Rotation Control
-    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
-    new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.setArmAngleSpeed(opController)));
+    new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
+    // new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.setArmAngleSpeed(opController)));
 
     // Manual Wrist Rotation Control
-    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
-    new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
+    new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
+    // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
 
     // Manual Extension Control
-    // opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
-    // opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
+    opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
     
     // opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
     // opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
     // extensionStopped.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
-    opLeftBumper.whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
-    opRightBumper.whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
-    extensionStopped.onTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
+    // opLeftBumper.whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
+    // opRightBumper.whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    // extensionStopped.onTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
 
     // shouldExtend.and((shouldRetract.negate())).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
     // shouldRetract.and((shouldExtend).negate()).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
@@ -143,11 +143,12 @@ public class RobotContainer {
     // Stop Arm
     armSensor.onTrue(Commands.runOnce(() -> armSubsystem.stopArm()));
     
+    
     // Open and Close Claw
-    // clawSensor.onTrue(Commands.runOnce(() -> armSubsystem.clawOpen()));
-    // clawSensor.onFalse(Commands.runOnce(() -> armSubsystem.clawClose()));
-    driverRightRed.onTrue(Commands.runOnce(() -> armSubsystem.clawOpen()));
-    driverLeftRed.onFalse(Commands.runOnce(() -> armSubsystem.clawClose()));
+    driverRightRed.whileTrue(Commands.runOnce(() -> armSubsystem.clawOpen()));
+    clawSensor.onFalse(Commands.runOnce(() -> armSubsystem.clawClose()));
+    // driverLeftRed.onFalse(Commands.runOnce(() -> armSubsystem.clawClose()));
+    // driverRightRed.onTrue(Commands.runOnce(() -> armSubsystem.clawOpen()));
     // driverLeftRed.whileFalse(Commands.runOnce(() -> armSubsystem.clawOff()));
 
     // Run vacuum
