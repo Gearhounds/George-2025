@@ -37,6 +37,8 @@ public class ExtensionSubsystem extends SubsystemBase{
         desiredExtensionPos = 0;
         extensionPIDOutput = 0;
         isManualMode = true;
+
+        // setDefaultCommand(Commands.run(() -> this.runExtension()));
     }
 
     @Override
@@ -46,13 +48,10 @@ public class ExtensionSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Extension: SetPoint From Member", desiredExtensionPos);
         SmartDashboard.putNumber("Extension: SetPoint From PID Controller", armLengthPidController.getSetpoint());
         SmartDashboard.putNumber("Extension: PID Output", extensionPIDOutput);
+        SmartDashboard.putBoolean("Extension: Is manual", isManualMode);
 
         retractAxis = opController.getLeftTriggerAxis();
         extendAxis = opController.getRightTriggerAxis();
-    }
-
-    public void initDefaultCommand() {
-        setDefaultCommand(Commands.run(() -> this.runExtension()));
     }
 
     public void toggleManualControl() {

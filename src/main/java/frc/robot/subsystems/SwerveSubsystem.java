@@ -47,6 +47,12 @@ public class SwerveSubsystem extends SubsystemBase {
         this.leftDriverStick = leftDriverStick;
         this.rightDriverStick = rightDriverStick;
 
+        //  setDefaultCommand(new SwerveJoystickCmd(this, 
+        //     () -> leftDriverStick.getRawAxis(1), 
+        //     () -> leftDriverStick.getRawAxis(0), 
+        //     () -> rightDriverStick.getRawAxis(0), 
+        //     () -> true));
+
         new Thread( () -> {
             try {
                 Thread.sleep(1000);
@@ -71,14 +77,6 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Robot Heading", getHeading());
-    }
-
-    public void initDefaultCommand() {
-        setDefaultCommand(new SwerveJoystickCmd(this, 
-            () -> leftDriverStick.getRawAxis(1), 
-            () -> leftDriverStick.getRawAxis(0), 
-            () -> rightDriverStick.getRawAxis(0), 
-            () -> true));
     }
 
     public void stopModules() {

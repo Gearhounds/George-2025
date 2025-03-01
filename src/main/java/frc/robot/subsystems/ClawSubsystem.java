@@ -56,6 +56,8 @@ public class ClawSubsystem extends SubsystemBase {
         wristPidController.setTolerance(0.01);
 
         compressor.enableAnalog(90, 100);
+
+        setDefaultCommand(new DefualtClawCmd(this));
     }
 
     @Override
@@ -65,11 +67,13 @@ public class ClawSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Claw: Position From Motor", wristMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Claw: SetPoint From PID Controller", wristPidController.getSetpoint());
         SmartDashboard.putNumber("Claw: Set Position From Member", desiredRotationPercentage);
+        SmartDashboard.putBoolean("Claw: Is manual", isManualMode);
+
     }
 
-    public void initDefaultCommand() {
-        setDefaultCommand(new DefualtClawCmd(this));
-    }
+    // public void initDefaultCommand() {
+    //     setDefaultCommand(new DefualtClawCmd(this));
+    // }
 
     public void toggleManualControl() {
         isManualMode = !isManualMode;
@@ -85,14 +89,14 @@ public class ClawSubsystem extends SubsystemBase {
 
     public void runWrist() {
         if (isManualMode) {
-            setWristSpeed(opController);
+            setWristSpeed();
         } else {
             runToPos();
         }
     }
 
-    public void setWristSpeed(XboxController controller) {
-        wristMotor.set(controller.getRightY()); 
+    public void setWristSpeed() {
+        wristMotor.set(opController.getRightY()); 
     }
 
 

@@ -96,11 +96,11 @@ public class RobotContainer {
 
     // Manual Arm Rotation Control
     // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
-    new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.runArmManual()));
+    // new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.runArmManual()));
 
     // Manual Wrist Rotation Control
     // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
-    new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
+    // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
 
 
     armSensor.onTrue(Commands.runOnce(() -> armSubsystem.stopArm()));
@@ -117,8 +117,8 @@ public class RobotContainer {
     
     // claw bindings
     
-    driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
-    clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
+    // driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
+    // clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
 
 
 

@@ -69,16 +69,15 @@ public class ArmSubsystem extends SubsystemBase {
             PersistMode.kPersistParameters);
 
         zeroArmPos();
-    }
 
-    public void initDefaultCommand() {
-        setDefaultCommand(Commands.run(() -> runArm()));
+        // setDefaultCommand(Commands.run(() -> runArm()));
     }
 
     public void periodic() {
         SmartDashboard.putNumber("arm desired position", desiredArmAnglePercentage);
         SmartDashboard.putNumber("arm current position", getArmAngle());
         SmartDashboard.putNumber("arm pid output", armAnglePIDOutput);
+        SmartDashboard.putBoolean("Arm: Is manual", isManualMode);
     }
 
     public void toggleManualControl() {
@@ -101,6 +100,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void runArm() {
+        System.out.println("Running arm");
         if (isManualMode) {
             runArmManual();
         } else {
