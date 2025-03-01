@@ -49,15 +49,16 @@ public class ArmSubsystem extends SubsystemBase{
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
 
+    private final XboxController opController;;
     
 
     public double desiredPosition;
     public double desiredAngle;
-    public ArmSubsystem() {
+    public ArmSubsystem(XboxController opController) {
         desiredPosition = 0;
         desiredAngle = 0;
         compressor.enableAnalog(90, 100);
-        
+        this.opController = opController;
         // extenderMotor.getEncoder().setPosition(0);
 
         rightConfig
@@ -96,6 +97,7 @@ public class ArmSubsystem extends SubsystemBase{
         double currentPos = extenderMotor.getEncoder().getPosition();
         currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
         currentPos = currentPos < 0 ? 0 : currentPos;
+        
         return currentPos;
     }
 
@@ -106,23 +108,26 @@ public class ArmSubsystem extends SubsystemBase{
 
     public void extendArm() {
         // extenderMotor.set(extenderMotor.getEncoder().getPosition() < -375 ? -.01 : -0.4);
+        // extenderMotor.set(opController.getRightTriggerAxis());
         extenderMotor.set(-1);
     }
     public void retractArm() {
         // extenderMotor.set(extenderMotor.getEncoder().getPosition() > -50 ? .01 : -0.4);
+        // extenderMotor.set(-opController.getLeftTriggerAxis());
         extenderMotor.set(1);
     }
     
     public void manualArmExtension(double speed) {
         extenderMotor.set(speed);
     }
+
     // Auto Control for Arm Extension
     public void setArmExtensionPos() {
         double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
         extenderMotor.set(-pidOutput);
-        SmartDashboard.putNumber("arm desired position", desiredPosition);
-        SmartDashboard.putNumber("arm current position", getArmExtension());
-        SmartDashboard.putNumber("arm pid output", pidOutput);
+        SmartDashboard.putNumber("extension desired position", desiredPosition);
+        SmartDashboard.putNumber("extension current position", getArmExtension());
+        SmartDashboard.putNumber("extension pid output", pidOutput);
     }
 
     public void armExtensionStop() {
