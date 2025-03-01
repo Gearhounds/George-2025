@@ -18,13 +18,14 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
 
-public class ArmSubsystem extends SubsystemBase{
+public class ArmSubsystem extends SubsystemBase {
 
-    public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
+    // public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
 
     public final SparkMax vacMotor = new SparkMax(Constants.ArmConstants.kVacMotorID, MotorType.kBrushless); 
 
@@ -42,20 +43,20 @@ public class ArmSubsystem extends SubsystemBase{
                                                                     Constants.ArmConstants.AnglekI,
                                                                     Constants.ArmConstants.AnglekD);
 
-    public final PIDController armLengthPidController = new PIDController(Constants.ArmConstants.LengthkP,
-                                                                          Constants.ArmConstants.LengthkI,
-                                                                          Constants.ArmConstants.LengthkD);
+    // public final PIDController armLengthPidController = new PIDController(Constants.ArmConstants.LengthkP,
+    //                                                                       Constants.ArmConstants.LengthkI,
+    //                                                                       Constants.ArmConstants.LengthkD);
 
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
 
-    private final XboxController opController;;
+    private final XboxController opController;
     
 
-    public double desiredPosition;
+    // public double desiredPosition;
     public double desiredAngle;
     public ArmSubsystem(XboxController opController) {
-        desiredPosition = 0;
+        // desiredPosition = 0;
         desiredAngle = 0;
         compressor.enableAnalog(90, 100);
         this.opController = opController;
@@ -75,12 +76,15 @@ public class ArmSubsystem extends SubsystemBase{
             PersistMode.kPersistParameters);
 
         
-        armLengthPidController.setTolerance(0.001);
+        
         
         zeroArmPos();
     }
 
-    
+    public void initDefaultCommand() {
+        // setDefaultCommand(new ArmExtensionCmd(this, opController));
+        setDefaultCommand(Commands.run(() -> this.stopArm()));
+    }
 
     public void zeroArmPos() {
         armEncoder.setPosition(0);
@@ -93,46 +97,46 @@ public class ArmSubsystem extends SubsystemBase{
         return currentArmAngle;
     }
 
-    public double getArmExtension() {
-        double currentPos = extenderMotor.getEncoder().getPosition();
-        currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
-        currentPos = currentPos < 0 ? 0 : currentPos;
+    // public double getArmExtension() {
+    //     double currentPos = extenderMotor.getEncoder().getPosition();
+    //     currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
+    //     currentPos = currentPos < 0 ? 0 : currentPos;
         
-        return currentPos;
-    }
+    //     return currentPos;
+    // }
 
     public void stopArm() {
         rightMotor.stopMotor();
         leftMotor.stopMotor();
     }
 
-    public void extendArm() {
-        // extenderMotor.set(extenderMotor.getEncoder().getPosition() < -375 ? -.01 : -0.4);
-        // extenderMotor.set(opController.getRightTriggerAxis());
-        extenderMotor.set(-1);
-    }
-    public void retractArm() {
-        // extenderMotor.set(extenderMotor.getEncoder().getPosition() > -50 ? .01 : -0.4);
-        // extenderMotor.set(-opController.getLeftTriggerAxis());
-        extenderMotor.set(1);
-    }
+    // public void extendArm() {
+    //     // extenderMotor.set(extenderMotor.getEncoder().getPosition() < -375 ? -.01 : -0.4);
+    //     // extenderMotor.set(opController.getRightTriggerAxis());
+    //     extenderMotor.set(-1);
+    // }
+    // public void retractArm() {
+    //     // extenderMotor.set(extenderMotor.getEncoder().getPosition() > -50 ? .01 : -0.4);
+    //     // extenderMotor.set(-opController.getLeftTriggerAxis());
+    //     extenderMotor.set(1);
+    // }
     
-    public void manualArmExtension(double speed) {
-        extenderMotor.set(speed);
-    }
+    // public void manualArmExtension(double speed) {
+    //     extenderMotor.set(speed);
+    // }
 
     // Auto Control for Arm Extension
-    public void setArmExtensionPos() {
-        double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
-        extenderMotor.set(-pidOutput);
-        SmartDashboard.putNumber("extension desired position", desiredPosition);
-        SmartDashboard.putNumber("extension current position", getArmExtension());
-        SmartDashboard.putNumber("extension pid output", pidOutput);
-    }
+    // public void setArmExtensionPos() {
+    //     double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
+    //     extenderMotor.set(-pidOutput);
+    //     SmartDashboard.putNumber("extension desired position", desiredPosition);
+    //     SmartDashboard.putNumber("extension current position", getArmExtension());
+    //     SmartDashboard.putNumber("extension pid output", pidOutput);
+    // }
 
-    public void armExtensionStop() {
-        extenderMotor.stopMotor();
-    }
+    // public void armExtensionStop() {
+    //     extenderMotor.stopMotor();
+    // }
 
     // Manual Control of Arm Angle
     public void setArmAngleSpeed(XboxController controller) {

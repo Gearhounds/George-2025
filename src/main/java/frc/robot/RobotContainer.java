@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.security.cert.Extension;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,6 +23,7 @@ import frc.robot.commands.ToggleClawCmd;
 import frc.robot.commands.WristRotationCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.ExtensionSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -30,6 +33,7 @@ public class RobotContainer {
 
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem armSubsystem = new ArmSubsystem(opController);
+  private final ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(opController);
   private final ClawSubsystem clawSubsystem = new ClawSubsystem();
 
   private final JoystickButton opButtonA = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_A);
@@ -125,13 +129,30 @@ public class RobotContainer {
     // opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
     // opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
     // extensionStopped.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
-    opLeftBumper.whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
-    opRightBumper.whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
-    extensionStopped.onTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
+    // opLeftBumper.whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
+    // opRightBumper.whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    // extensionStopped.onTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
 
     // shouldExtend.and((shouldRetract.negate())).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
     // shouldRetract.and((shouldExtend).negate()).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
     // (shouldExtend.and(shouldRetract)).negate().whileTrue(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
+
+
+
+    // extension bindings
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
     // End Manual Controls
 
