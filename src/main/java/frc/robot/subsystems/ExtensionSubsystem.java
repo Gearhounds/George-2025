@@ -55,6 +55,10 @@ public class ExtensionSubsystem extends SubsystemBase{
         setDefaultCommand(Commands.run(() -> this.runExtension()));
     }
 
+    public void toggleManualControl() {
+        isManualMode = !isManualMode;
+    }
+
     public double getArmExtension() {
         double currentPos = extenderMotor.getEncoder().getPosition();
         currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
@@ -87,10 +91,6 @@ public class ExtensionSubsystem extends SubsystemBase{
     
     public void stopExtension() {
         extenderMotor.set(0); 
-    }
-
-    public void toggleManualControl() {
-        isManualMode = !isManualMode;
     }
 
     // These are basic testing functions

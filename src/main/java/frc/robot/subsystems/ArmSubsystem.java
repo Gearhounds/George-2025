@@ -81,6 +81,10 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("arm pid output", armAnglePIDOutput);
     }
 
+    public void toggleManualControl() {
+        isManualMode = !isManualMode;
+    }
+
     public void zeroArmPos() {
         armEncoder.setPosition(0);
     }

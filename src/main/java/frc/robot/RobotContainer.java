@@ -89,7 +89,7 @@ public class RobotContainer {
     driverRightTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
 
     // Toggle between manual and auto control
-    opButtonA.onTrue(Commands.runOnce(() -> isAutoControl = !isAutoControl)); // TODO figure out how to send this to the subsystems
+    opButtonA.onTrue(getToggleManualControlCommand());
     
 
     // Manual Controls
@@ -149,6 +149,14 @@ public class RobotContainer {
     // Open and Close Climb
     opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
     opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
+  }
+
+  public Command getToggleManualControlCommand() {
+    return Commands.runOnce(() -> {
+      armSubsystem.toggleManualControl();
+      extensionSubsystem.toggleManualControl();
+      clawSubsystem.toggleManualControl();
+    });
   }
 
   public Command getAutonomousCommand() {
