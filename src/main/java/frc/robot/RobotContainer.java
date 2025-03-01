@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -46,6 +47,9 @@ public class RobotContainer {
   private final Trigger opDPadDown = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_DOWN);
   private final JoystickButton driverRightRed = new JoystickButton(driverRight, 3);
   private final JoystickButton driverLeftRed = new JoystickButton(driverLeft, 3);
+  private final JoystickButton driverTrigger = new JoystickButton(driverLeft, 2);
+ 
+
 
   private final Trigger shouldExtend = new Trigger(() -> {
     return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
@@ -81,7 +85,8 @@ public class RobotContainer {
   private void configureBindings() {
     // Zero robot yaw
     // driverRightRed.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
-    driverRightRed.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+    // new Trigger(() -> true).onTrue(Command.runOnce(() -> CameraServer.startAutomaticCapture()));
+    driverTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
 
     // Toggle between manual and auto control
     opButtonA.onTrue(Commands.runOnce(() -> isAutoControl = !isAutoControl));
@@ -119,8 +124,9 @@ public class RobotContainer {
     // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
 
     // Manual Extension Control
-    opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
-    opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    opLeftBumper.and(() -> !isAutoControl).onTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
+    opRightBumper.and(() -> !isAutoControl).onTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
+    opLeftBumper.or(opRightBumper).whileFalse(Commands.runOnce(() -> armSubsystem.armExtensionStop()));
     
     // opLeftBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.retractArm()));
     // opRightBumper.and(() -> !isAutoControl).whileTrue(Commands.runOnce(() -> armSubsystem.extendArm()));
@@ -143,7 +149,7 @@ public class RobotContainer {
     // Stop Arm
     armSensor.onTrue(Commands.runOnce(() -> armSubsystem.stopArm()));
     
-    
+
     // Open and Close Claw
     driverRightRed.whileTrue(Commands.runOnce(() -> armSubsystem.clawOpen()));
     clawSensor.onFalse(Commands.runOnce(() -> armSubsystem.clawClose()));
@@ -161,6 +167,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
+    return new BasicAutoDriveCmd(swerveSubsystem, -0.5, 2);
   }
 }

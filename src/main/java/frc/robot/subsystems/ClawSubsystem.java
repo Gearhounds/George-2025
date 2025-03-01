@@ -36,7 +36,7 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void setWristSpeed(XboxController controller) {
-        wristMotor.set(controller.getRightY()); 
+        wristMotor.set(-controller.getRightY() * 0.5); 
     }
 
     public double getWristPosition() {

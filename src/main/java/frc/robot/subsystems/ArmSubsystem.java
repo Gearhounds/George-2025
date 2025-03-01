@@ -49,14 +49,14 @@ public class ArmSubsystem extends SubsystemBase{
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
 
-    private final XboxController opController;;
+    private final XboxController opController;
     
 
     public double desiredPosition;
     public double desiredAngle;
     public ArmSubsystem(XboxController opController) {
         desiredPosition = 0;
-        desiredAngle = 0;
+        desiredAngle = .5;
         compressor.enableAnalog(90, 100);
         this.opController = opController;
         // extenderMotor.getEncoder().setPosition(0);
@@ -80,7 +80,10 @@ public class ArmSubsystem extends SubsystemBase{
         zeroArmPos();
     }
 
-    
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Desired Angle", desiredAngle);
+    }
 
     public void zeroArmPos() {
         armEncoder.setPosition(0);
@@ -136,7 +139,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     // Manual Control of Arm Angle
     public void setArmAngleSpeed(XboxController controller) {
-        rightMotor.set(-controller.getLeftY()*.5);
+        rightMotor.set(controller.getLeftY()*.5);
         // leftMotor.set(controller.getLeftY()*.5);
     }
 
