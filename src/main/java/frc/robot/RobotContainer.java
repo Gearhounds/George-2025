@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmExtensionCmd;
 import frc.robot.commands.ArmRotationCmd;
+import frc.robot.commands.BasicAutoDriveCmd;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ToggleClawCmd;
@@ -138,6 +139,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
   }
 }
