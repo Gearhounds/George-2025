@@ -8,10 +8,13 @@ import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.SwerveJoystickCmd;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -36,24 +39,29 @@ public class SwerveSubsystem extends SubsystemBase {
         Constants.DriveConstants.kBackRightAbsEncoderOffsetRad, Constants.DriveConstants.kBackRightAbsEncoderReversed);
     
     private static AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
+    private final Joystick leftDriverStick;
+    private final Joystick rightDriverStick;
+
+    public SwerveSubsystem(Joystick leftDriverStick, Joystick rightDriverStick) {
+        this.leftDriverStick = leftDriverStick;
+        this.rightDriverStick = rightDriverStick;
+
+        new Thread( () -> {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                zeroHeading();
+            }
+        });
+    }
+
+    public void zeroHeading() {
+        gyro.reset();
+    }
     
-        public SwerveSubsystem() {
-            
-            new Thread( () -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    zeroHeading();
-                }
-            });
-        }
-    
-        public void zeroHeading() {
-            gyro.reset();
-        }
-    
-        public static double getHeading() {
-            return gyro.getYaw();
+    public static double getHeading() {
+        return gyro.getYaw();
     }
 
     public Rotation2d getRotation2d() {
@@ -63,6 +71,14 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Robot Heading", getHeading());
+    }
+
+    public void initDefaultCommand() {
+        setDefaultCommand(new SwerveJoystickCmd(this, 
+            () -> leftDriverStick.getRawAxis(1), 
+            () -> leftDriverStick.getRawAxis(0), 
+            () -> rightDriverStick.getRawAxis(0), 
+            () -> true));
     }
 
     public void stopModules() {

@@ -22,13 +22,12 @@ public class ExtensionSubsystem extends SubsystemBase{
 
     private final double EXTENSION_SPEED = 0.5;
     public double desiredExtensionPos;
+    private double extensionPIDOutput;
     
-    // TODO use these instead of directly getting triggers
     private double retractAxis;
     private double extendAxis;
 
     private boolean isManualMode;
-
 
     public ExtensionSubsystem(XboxController opController) {
         this.opController = opController;
@@ -36,23 +35,24 @@ public class ExtensionSubsystem extends SubsystemBase{
         retractAxis = 0;
         extendAxis = 0;
         desiredExtensionPos = 0;
+        extensionPIDOutput = 0;
         isManualMode = true;
     }
 
     @Override
     public void periodic() {
-        // Periodic Function for Dashboard and similar
         SmartDashboard.putNumber("Extension: Position From Function", getArmExtension());
         SmartDashboard.putNumber("Extension: Position From Motor", extenderMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Extension: Set Position From Member", desiredExtensionPos);
+        SmartDashboard.putNumber("Extension: SetPoint From Member", desiredExtensionPos);
+        SmartDashboard.putNumber("Extension: SetPoint From PID Controller", armLengthPidController.getSetpoint());
+        SmartDashboard.putNumber("Extension: PID Output", extensionPIDOutput);
 
         retractAxis = opController.getLeftTriggerAxis();
         extendAxis = opController.getRightTriggerAxis();
     }
 
     public void initDefaultCommand() {
-        // setDefaultCommand(new ArmExtensionCmd(this, opController));
-        setDefaultCommand(Commands.run(() -> this.runExtensionFromTriggers()));
+        setDefaultCommand(Commands.run(() -> this.runExtension()));
     }
 
     public double getArmExtension() {
@@ -66,12 +66,12 @@ public class ExtensionSubsystem extends SubsystemBase{
         extenderMotor.set(speed);
     }
 
-    public void runExtensionFromTriggers() {
+    public void runExtension() {
         if (isManualMode) {
             if (extendAxis > 0.1 && retractAxis < .1) {
-                manualArmExtension(opController.getRightTriggerAxis());
+                manualArmExtension(extendAxis);
             } else if (retractAxis > 0.1 && extendAxis < .1) {
-                manualArmExtension(-opController.getLeftTriggerAxis());
+                manualArmExtension(-retractAxis);
             } else {
                 stopExtension();
             }
@@ -81,11 +81,8 @@ public class ExtensionSubsystem extends SubsystemBase{
     }
 
     public void setArmExtensionPos() {
-        double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredExtensionPos);
-        extenderMotor.set(-pidOutput);
-        SmartDashboard.putNumber("extension desired position", desiredExtensionPos);
-        SmartDashboard.putNumber("extension current position", getArmExtension());
-        SmartDashboard.putNumber("extension pid output", pidOutput);
+        extensionPIDOutput = armLengthPidController.calculate(getArmExtension(), desiredExtensionPos);
+        extenderMotor.set(-extensionPIDOutput);
     }
     
     public void stopExtension() {

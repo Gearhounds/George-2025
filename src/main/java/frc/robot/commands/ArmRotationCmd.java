@@ -26,13 +26,13 @@ public class ArmRotationCmd extends Command {
             // dont allow invalid %
             setPosPercent = armSystem.getArmAngle();
         } else {
-            armSystem.desiredAngle = setPosPercent;
+            armSystem.desiredArmAnglePercentage = setPosPercent;
         }
     }
 
     @Override
     public void execute() {
-        armSystem.setArmAnglePos();
+        armSystem.runArmPID();
     }
 
     @Override

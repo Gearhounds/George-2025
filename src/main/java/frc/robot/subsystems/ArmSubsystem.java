@@ -13,21 +13,19 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
+import frc.robot.commands.ClimbCmd;
 
 public class ArmSubsystem extends SubsystemBase {
-
-    // public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
-
-    public final SparkMax vacMotor = new SparkMax(Constants.ArmConstants.kVacMotorID, MotorType.kBrushless); 
 
     public final SparkFlex rightMotor = new SparkFlex(Constants.ArmConstants.kRightMotorID, MotorType.kBrushless);
     public final SparkFlex leftMotor = new SparkFlex(Constants.ArmConstants.kLeftMotorID, MotorType.kBrushless);
@@ -37,30 +35,25 @@ public class ArmSubsystem extends SubsystemBase {
     public final RelativeEncoder armEncoder = rightMotor.getEncoder();
     public final EncoderConfig encoderConfig = new EncoderConfig();
 
-    public final Compressor compressor = new Compressor(21, PneumaticsModuleType.REVPH);
+    private double armAnglePIDOutput; // this is the speed of the motor after being run through PID
+    public double desiredArmAnglePercentage; // this is the setpoint of the arm PID
 
     public final PIDController armAnglePidController = new PIDController(Constants.ArmConstants.AnglekP,
-                                                                    Constants.ArmConstants.AnglekI,
-                                                                    Constants.ArmConstants.AnglekD);
-
-    // public final PIDController armLengthPidController = new PIDController(Constants.ArmConstants.LengthkP,
-    //                                                                       Constants.ArmConstants.LengthkI,
-    //                                                                       Constants.ArmConstants.LengthkD);
+                                                                        Constants.ArmConstants.AnglekI,
+                                                                        Constants.ArmConstants.AnglekD);
 
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
-    public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
-
-    private final XboxController opController;
     
 
-    // public double desiredPosition;
-    public double desiredAngle;
+    private final XboxController opController;
+
+    private boolean isManualMode;
+
     public ArmSubsystem(XboxController opController) {
-        // desiredPosition = 0;
-        desiredAngle = 0;
-        compressor.enableAnalog(90, 100);
+        isManualMode = true;
+
+        desiredArmAnglePercentage = 0;
         this.opController = opController;
-        // extenderMotor.getEncoder().setPosition(0);
 
         rightConfig
             .inverted(true)
@@ -75,15 +68,17 @@ public class ArmSubsystem extends SubsystemBase {
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
 
-        
-        
-        
         zeroArmPos();
     }
 
     public void initDefaultCommand() {
-        // setDefaultCommand(new ArmExtensionCmd(this, opController));
-        setDefaultCommand(Commands.run(() -> this.stopArm()));
+        setDefaultCommand(Commands.run(() -> runArm()));
+    }
+
+    public void periodic() {
+        SmartDashboard.putNumber("arm desired position", desiredArmAnglePercentage);
+        SmartDashboard.putNumber("arm current position", getArmAngle());
+        SmartDashboard.putNumber("arm pid output", armAnglePIDOutput);
     }
 
     public void zeroArmPos() {
@@ -93,87 +88,30 @@ public class ArmSubsystem extends SubsystemBase {
     public double getArmAngle() {
         double currentArmAngle = armEncoder.getPosition();
         currentArmAngle = MathHelp.map(currentArmAngle, -40, 17, 0, 1);
-        // currentArmAngle = currentArmAngle < 0 ? 0 : currentArmAngle;
         return currentArmAngle;
     }
-
-    // public double getArmExtension() {
-    //     double currentPos = extenderMotor.getEncoder().getPosition();
-    //     currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
-    //     currentPos = currentPos < 0 ? 0 : currentPos;
-        
-    //     return currentPos;
-    // }
 
     public void stopArm() {
         rightMotor.stopMotor();
         leftMotor.stopMotor();
     }
 
-    // public void extendArm() {
-    //     // extenderMotor.set(extenderMotor.getEncoder().getPosition() < -375 ? -.01 : -0.4);
-    //     // extenderMotor.set(opController.getRightTriggerAxis());
-    //     extenderMotor.set(-1);
-    // }
-    // public void retractArm() {
-    //     // extenderMotor.set(extenderMotor.getEncoder().getPosition() > -50 ? .01 : -0.4);
-    //     // extenderMotor.set(-opController.getLeftTriggerAxis());
-    //     extenderMotor.set(1);
-    // }
-    
-    // public void manualArmExtension(double speed) {
-    //     extenderMotor.set(speed);
-    // }
-
-    // Auto Control for Arm Extension
-    // public void setArmExtensionPos() {
-    //     double pidOutput = armLengthPidController.calculate(getArmExtension(), desiredPosition);
-    //     extenderMotor.set(-pidOutput);
-    //     SmartDashboard.putNumber("extension desired position", desiredPosition);
-    //     SmartDashboard.putNumber("extension current position", getArmExtension());
-    //     SmartDashboard.putNumber("extension pid output", pidOutput);
-    // }
-
-    // public void armExtensionStop() {
-    //     extenderMotor.stopMotor();
-    // }
-
-    // Manual Control of Arm Angle
-    public void setArmAngleSpeed(XboxController controller) {
-        rightMotor.set(-controller.getLeftY()*.5);
-        // leftMotor.set(controller.getLeftY()*.5);
+    public void runArm() {
+        if (isManualMode) {
+            runArmManual();
+        } else {
+            runArmPID();
+        }
     }
 
-    public void setArmAnglePos() {
-        double pidOutput = armAnglePidController.calculate(getArmAngle(), desiredAngle);
-        pidOutput = pidOutput < 0 ? pidOutput/2 : pidOutput;
-        rightMotor.set(pidOutput);
-        // leftMotor.set(pidOutput);
-        SmartDashboard.putNumber("arm desired position", desiredAngle);
-        SmartDashboard.putNumber("arm current position", getArmAngle());
-        SmartDashboard.putNumber("arm pid output", pidOutput);
+    public void runArmManual() {
+        rightMotor.set(-opController.getLeftY() * 0.5); // left motor is inverted follower
     }
 
-    public void vacOn() {
-        vacMotor.set(1);
-    }
-
-    public void vacOff() {
-        vacMotor.stopMotor();
-    }
-
-    public void clawClose() {
-        clawSolenoid.set(Value.kForward);
-        // clawSolenoid.set(Value.kOff);
-    }
-
-    public void clawOpen() {
-        clawSolenoid.set(Value.kReverse);
-        // clawSolenoid.set(Value.kOff);
-    }
-
-    public void clawOff() {
-        clawSolenoid.set(Value.kOff);
+    public void runArmPID() {
+        double rawPID = armAnglePidController.calculate(getArmAngle(), desiredArmAnglePercentage);
+        armAnglePIDOutput = rawPID < 0 ? rawPID / 2 : rawPID; // limit the speed of the arm when going down
+        rightMotor.set(armAnglePIDOutput);
     }
 
     public void climbOn() {
@@ -182,5 +120,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     public void climbOff() {
         climbSolenoid.set(false);
+    }
+
+    public Command getClimbStartCommand() {
+        return new ClimbCmd(this, true);
+    }
+
+    public Command getClimbCloseCmd() {
+        return new ClimbCmd(this, false);
     }
 }
