@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
+import frc.robot.commands.DefaultExtensionCommand;
 
 public class ExtensionSubsystem extends SubsystemBase{
     public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
@@ -39,10 +40,14 @@ public class ExtensionSubsystem extends SubsystemBase{
         isManualMode = true;
 
         // setDefaultCommand(Commands.run(() -> this.runExtension()));
+        setDefaultCommand(new DefaultExtensionCommand(this));
     }
 
     @Override
     public void periodic() {
+        retractAxis = opController.getLeftTriggerAxis();
+        extendAxis = opController.getRightTriggerAxis();
+
         SmartDashboard.putNumber("Extension: Position From Function", getArmExtension());
         SmartDashboard.putNumber("Extension: Position From Motor", extenderMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Extension: SetPoint From Member", desiredExtensionPos);
@@ -50,8 +55,8 @@ public class ExtensionSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Extension: PID Output", extensionPIDOutput);
         SmartDashboard.putBoolean("Extension: Is manual", isManualMode);
 
-        retractAxis = opController.getLeftTriggerAxis();
-        extendAxis = opController.getRightTriggerAxis();
+        SmartDashboard.putNumber("retract axi", retractAxis);
+        SmartDashboard.putNumber("extend axi", extendAxis);
     }
 
     public void toggleManualControl() {

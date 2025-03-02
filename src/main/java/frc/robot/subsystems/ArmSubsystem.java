@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
 import frc.robot.commands.ClimbCmd;
+import frc.robot.commands.DefaultArmCmd;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -70,7 +71,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         zeroArmPos();
 
-        // setDefaultCommand(Commands.run(() -> runArm()));
+        setDefaultCommand(new DefaultArmCmd(this));
     }
 
     public void periodic() {
