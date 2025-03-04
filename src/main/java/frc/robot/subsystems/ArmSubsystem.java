@@ -101,7 +101,6 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void runArm() {
-        System.out.println("Running arm");
         if (isManualMode) {
             runArmManual();
         } else {

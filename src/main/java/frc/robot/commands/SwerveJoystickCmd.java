@@ -49,9 +49,9 @@ public class SwerveJoystickCmd extends Command {
         SmartDashboard.putNumber("Turn Speed Pre Deadband", turningSpeed);
 
         // 2. Apply deadband
-        xSpeed = Math.abs(xSpeed) > 0.075 ? xSpeed  : 0;
-        ySpeed = Math.abs(ySpeed) > 0.075 ? ySpeed  : 0;
-        turningSpeed = Math.abs(turningSpeed) > 0.075 ? turningSpeed  : 0;
+        xSpeed = Math.abs(xSpeed) > 0.075 ? xSpeed : 0;
+        ySpeed = Math.abs(ySpeed) > 0.075 ? ySpeed : 0;
+        turningSpeed = Math.abs(turningSpeed) > 0.075 ? turningSpeed : 0;
 
         SmartDashboard.putNumber("X Speed Post Deadband", xSpeed);
         SmartDashboard.putNumber("Y Speed Post Deadband", ySpeed);
@@ -70,8 +70,7 @@ public class SwerveJoystickCmd extends Command {
         ChassisSpeeds chassisSpeeds;
         if (fieldOrientedFunction.get()) {
             // field
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
         } else {
             // robot
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);

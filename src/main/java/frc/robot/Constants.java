@@ -88,9 +88,7 @@ public class Constants {
         public static final boolean kFrontLeftTurningEncoderReversed = true;
         public static final int kFrontLeftAbsEncoderPort = 9;
         public static final double kFrontLeftAbsEncoderOffsetRad = 0;
-        public static final boolean kFrontLeftAbsEncoderReversed = false;
-
-        
+        public static final boolean kFrontLeftAbsEncoderReversed = false;        
 
         // FRONT RIGHT
         public static final int kFrontRightDriveMotorPort = 13;

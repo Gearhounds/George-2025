@@ -8,6 +8,7 @@ import java.security.cert.Extension;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -73,87 +74,37 @@ public class RobotContainer {
   private boolean isAutoControl = false;
 
   public RobotContainer() {
+    DriverStation.silenceJoystickConnectionWarning(true);
     opController.getLeftY();
-    
-    swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
-      swerveSubsystem,
-      () -> driverLeft.getRawAxis(1), 
-      () -> driverLeft.getRawAxis(0), 
-      () -> -driverRight.getRawAxis(0), 
-      () -> true));
-
   
     configureBindings();
   }
 
   private void configureBindings() {
-    // Zero robot yaw
+    // Zero robot yaw / enable robot orientation mode
     driverRightTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
-    driverLeftTrigger.onTrue(new SwerveJoystickCmd(
-      swerveSubsystem,
-      () -> driverLeft.getRawAxis(1), 
-      () -> driverLeft.getRawAxis(0), 
-      () -> -driverRight.getRawAxis(0), 
-      () -> false));
+    driverLeftTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.setFieldOriented(false)));
+    driverLeftTrigger.onFalse(Commands.runOnce(() -> swerveSubsystem.setFieldOriented(true)));
 
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
-    
-
-    // Manual Controls
-
-    // Manual Arm Rotation Control
-    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
-    // new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.runArmManual()));
-
-    // Manual Wrist Rotation Control
-    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
-    // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
 
 
     armSensor.onTrue(Commands.runOnce(() -> armSubsystem.stopArm()));
+    
 
-    // extension bindings
-    
-    
-    
-    
-    
-    
-    
-    // end extension bindings
-    
-    // claw bindings
-    
+    // claw bindings    
     driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
     driverRightPinky.onTrue(clawSubsystem.getCloseClawCommand());
     clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
-
-
-
-
     // end claw bindings
 
-    // Vacuum Bindings
 
+
+    // Vacuum Bindings
     opButtonY.onChange(clawSubsystem.getToggleVacCommand());
 
 
-
-
-
-
-
-
-    // End Manual Controls
-
-
-
-
-    // Start Controls
-
-    // Stop Arm
-    
 
     // Open and Close Climb
     opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
