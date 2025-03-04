@@ -6,7 +6,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
@@ -77,9 +76,9 @@ public class ExtensionSubsystem extends SubsystemBase{
     public void runExtension() {
         if (isManualMode) {
             if (extendAxis > 0.1 && retractAxis < .1) {
-                manualArmExtension(extendAxis);
+                manualArmExtension(-extendAxis);
             } else if (retractAxis > 0.1 && extendAxis < .1) {
-                manualArmExtension(-retractAxis);
+                manualArmExtension(retractAxis);
             } else {
                 stopExtension();
             }

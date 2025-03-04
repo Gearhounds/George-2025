@@ -51,7 +51,9 @@ public class RobotContainer {
   private final Trigger opDPadDown = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_DOWN);
   private final JoystickButton driverRightRed = new JoystickButton(driverRight, 3);
   private final JoystickButton driverLeftRed = new JoystickButton(driverLeft, 3);
-  private final JoystickButton driverRightTrigger = new JoystickButton(driverLeft, 2);
+  private final JoystickButton driverRightTrigger = new JoystickButton(driverRight, 2);
+  private final JoystickButton driverLeftTrigger = new JoystickButton(driverLeft, 2);
+  private final JoystickButton driverRightPinky = new JoystickButton(driverRight, 5);
 
   private final Trigger shouldExtend = new Trigger(() -> {
     return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
@@ -87,6 +89,12 @@ public class RobotContainer {
   private void configureBindings() {
     // Zero robot yaw
     driverRightTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+    driverLeftTrigger.onTrue(new SwerveJoystickCmd(
+      swerveSubsystem,
+      () -> driverLeft.getRawAxis(1), 
+      () -> driverLeft.getRawAxis(0), 
+      () -> -driverRight.getRawAxis(0), 
+      () -> false));
 
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
@@ -117,8 +125,9 @@ public class RobotContainer {
     
     // claw bindings
     
-    // driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
-    // clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
+    driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
+    driverRightPinky.onTrue(clawSubsystem.getCloseClawCommand());
+    clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
 
 
 

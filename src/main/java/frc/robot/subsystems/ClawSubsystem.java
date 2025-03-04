@@ -96,7 +96,7 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void setWristSpeed() {
-        wristMotor.set(opController.getRightY()); 
+        wristMotor.set(-opController.getRightY()); 
     }
 
 

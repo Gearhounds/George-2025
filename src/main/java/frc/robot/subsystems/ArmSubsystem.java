@@ -110,7 +110,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void runArmManual() {
-        rightMotor.set(-opController.getLeftY() * 0.5); // left motor is inverted follower
+        rightMotor.set(opController.getLeftY() * 0.5); // left motor is inverted follower
     }
 
     public void runArmPID() {
