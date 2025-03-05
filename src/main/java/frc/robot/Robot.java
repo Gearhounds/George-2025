@@ -22,7 +22,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("Claw Sensor", m_robotContainer.clawSen.get());
-    SmartDashboard.putBoolean("Arm Sensor", m_robotContainer.armSen.get());
+    
   }
 
   @Override

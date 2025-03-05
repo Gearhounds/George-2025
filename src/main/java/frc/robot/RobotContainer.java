@@ -65,8 +65,8 @@ public class RobotContainer {
 
   public DigitalInput clawSen = new DigitalInput(6);
   private final Trigger clawSensor = new Trigger(() -> clawSen.get());
-  public DigitalInput armSen = new DigitalInput(9);
-  private final Trigger armSensor = new Trigger(() -> !armSen.get());
+  // public DigitalInput armSen = new DigitalInput(9);
+  // private final Trigger armSensor = new Trigger(() -> !armSen.get());
 
   private final Trigger extensionStopped = new Trigger(() -> !(opLeftBumper.getAsBoolean() || opRightBumper.getAsBoolean()));
 
@@ -111,7 +111,7 @@ public class RobotContainer {
     // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
 
 
-    armSensor.onTrue(Commands.runOnce(() -> armSubsystem.stopArm()));
+    // armSensor.onChange(Commands.runOnce(() -> armSubsystem.toggleAtLimit()));
 
     // extension bindings
     

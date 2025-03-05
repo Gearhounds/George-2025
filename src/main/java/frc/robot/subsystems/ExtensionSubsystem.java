@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
 import frc.robot.commands.DefaultExtensionCommand;
+import frc.robot.commands.ExtendToPercentageCmd;
 
 public class ExtensionSubsystem extends SubsystemBase{
     public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
@@ -24,28 +27,30 @@ public class ExtensionSubsystem extends SubsystemBase{
     public double desiredExtensionPos;
     private double extensionPIDOutput;
     
-    private double retractAxis;
-    private double extendAxis;
+    private double retractSpeed;
+    private double extendSpeed;
 
     private boolean isManualMode;
 
     public ExtensionSubsystem(XboxController opController) {
         this.opController = opController;
-        armLengthPidController.setTolerance(0.001);
-        retractAxis = 0;
-        extendAxis = 0;
+        armLengthPidController.setTolerance(0.01);
+        retractSpeed = 0;
+        extendSpeed = 0;
         desiredExtensionPos = 0;
         extensionPIDOutput = 0;
         isManualMode = true;
 
-        // setDefaultCommand(Commands.run(() -> this.runExtension()));
+        SmartDashboard.putNumber("Extend Set", 0);
+        SmartDashboard.putData("Extend", new ExtendToPercentageCmd(this, () -> 0.0));
+
         setDefaultCommand(new DefaultExtensionCommand(this));
     }
 
     @Override
     public void periodic() {
-        retractAxis = opController.getLeftTriggerAxis();
-        extendAxis = opController.getRightTriggerAxis();
+        retractSpeed = opController.getLeftTriggerAxis();
+        extendSpeed = opController.getRightTriggerAxis();
 
         SmartDashboard.putNumber("Extension: Position From Function", getArmExtension());
         SmartDashboard.putNumber("Extension: Position From Motor", extenderMotor.getEncoder().getPosition());
@@ -54,8 +59,8 @@ public class ExtensionSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Extension: PID Output", extensionPIDOutput);
         SmartDashboard.putBoolean("Extension: Is manual", isManualMode);
 
-        SmartDashboard.putNumber("retract axi", retractAxis);
-        SmartDashboard.putNumber("extend axi", extendAxis);
+        SmartDashboard.putNumber("retract speed", retractSpeed);
+        SmartDashboard.putNumber("extend speed", extendSpeed);
     }
 
     public void toggleManualControl() {
@@ -75,10 +80,10 @@ public class ExtensionSubsystem extends SubsystemBase{
 
     public void runExtension() {
         if (isManualMode) {
-            if (extendAxis > 0.1 && retractAxis < .1) {
-                manualArmExtension(-extendAxis);
-            } else if (retractAxis > 0.1 && extendAxis < .1) {
-                manualArmExtension(retractAxis);
+            if (extendSpeed > 0.1 && retractSpeed < .1) {
+                manualArmExtension(-extendSpeed);
+            } else if (retractSpeed > 0.1 && extendSpeed < .1) {
+                manualArmExtension(retractSpeed);
             } else {
                 stopExtension();
             }

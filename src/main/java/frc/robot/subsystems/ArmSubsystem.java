@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -50,8 +51,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     private boolean isManualMode;
 
+    private boolean atLimit;
+
+    public DigitalInput armSen = new DigitalInput(9);
+
     public ArmSubsystem(XboxController opController) {
         isManualMode = true;
+        atLimit = false;
 
         desiredArmAnglePercentage = 0;
         this.opController = opController;
@@ -79,6 +85,11 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("arm current position", getArmAngle());
         SmartDashboard.putNumber("arm pid output", armAnglePIDOutput);
         SmartDashboard.putBoolean("Arm: Is manual", isManualMode);
+        SmartDashboard.putBoolean("Arm Sensor", armSen.get());
+    }
+
+    public void toggleAtLimit() {
+        atLimit = !atLimit;
     }
 
     public void toggleManualControl() {
@@ -110,7 +121,9 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void runArmManual() {
-        rightMotor.set(opController.getLeftY() * 0.5); // left motor is inverted follower
+        var speed = opController.getLeftY() * 0.5;
+        if (speed < 0 && !armSen.get()) speed = 0;
+        rightMotor.set(speed); // left motor is inverted follower
     }
 
     public void runArmPID() {
