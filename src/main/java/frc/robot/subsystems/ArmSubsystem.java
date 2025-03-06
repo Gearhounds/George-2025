@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -50,6 +51,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final XboxController opController;
 
     private boolean isManualMode;
+    private boolean controllerGettingInput;
 
     private boolean atLimit;
 
@@ -57,6 +59,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     public ArmSubsystem(XboxController opController) {
         isManualMode = true;
+        controllerGettingInput = false;
         atLimit = false;
 
         desiredArmAnglePercentage = 0;
@@ -81,6 +84,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
+        controllerGettingInput = MathUtil.applyDeadband(opController.getLeftY(), 0.3) != 0;
+
         SmartDashboard.putNumber("arm desired position", desiredArmAnglePercentage);
         SmartDashboard.putNumber("arm current position", getArmAngle());
         SmartDashboard.putNumber("arm pid output", armAnglePIDOutput);
@@ -112,8 +117,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void runArm() {
-        System.out.println("Running arm");
-        if (isManualMode) {
+        if (isManualMode && controllerGettingInput) {
             runArmManual();
         } else {
             runArmPID();
@@ -124,6 +128,7 @@ public class ArmSubsystem extends SubsystemBase {
         var speed = opController.getLeftY() * 0.5;
         if (speed < 0 && !armSen.get()) speed = 0;
         rightMotor.set(speed); // left motor is inverted follower
+        desiredArmAnglePercentage = getArmAngle();
     }
 
     public void runArmPID() {

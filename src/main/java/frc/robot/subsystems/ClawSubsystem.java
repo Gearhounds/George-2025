@@ -39,11 +39,13 @@ public class ClawSubsystem extends SubsystemBase {
 
     public double desiredRotationPercentage;
     private boolean isManualMode;
+    private boolean controllerGettingInput;
 
     public ClawSubsystem (XboxController opController, Compressor compressor) {
         this.compressor = compressor;
         this.opController = opController;
         isManualMode = true;
+        controllerGettingInput = false;
         
         
         desiredRotationPercentage = 0;
@@ -64,6 +66,8 @@ public class ClawSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        controllerGettingInput = MathUtil.applyDeadband(opController.getRightY(), 0.3) != 0;
+
         // Periodic Function for Dashboard and similar
         SmartDashboard.putNumber("Vac Motor: ", vacMotor.get());
         SmartDashboard.putNumber("Claw: Position From Motor", wristMotor.getEncoder().getPosition());
@@ -84,7 +88,7 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void runWrist() {
-        if (isManualMode) {
+        if (isManualMode && controllerGettingInput) {
             setWristSpeed();
         } else {
             runToPos();
