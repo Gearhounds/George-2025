@@ -98,6 +98,7 @@ public class ExtensionSubsystem extends SubsystemBase{
         extenderMotor.set(-extensionPIDOutput);
     }
     
+    // This is the stop function
     public void stopExtension() {
         extenderMotor.set(0); 
     }
