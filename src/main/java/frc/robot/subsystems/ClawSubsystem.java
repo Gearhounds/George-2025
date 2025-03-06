@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Value;
-
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -14,7 +11,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,7 +25,6 @@ import frc.robot.commands.WristRotationCmd;
 public class ClawSubsystem extends SubsystemBase {
     private final SparkMax wristMotor = new SparkMax(Constants.ArmConstants.kWristMotorID, MotorType.kBrushed);
     private SparkMaxConfig wristConfig = new SparkMaxConfig();
-    private final RelativeEncoder wristEncoder = wristMotor.getEncoder(); // TODO this is an absolute encoder
 
     private final XboxController opController;
     
@@ -37,7 +32,6 @@ public class ClawSubsystem extends SubsystemBase {
     public final SparkMax vacMotor = new SparkMax(Constants.ArmConstants.kVacMotorID, MotorType.kBrushless);
     
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
-    
 
     public final PIDController wristPidController = new PIDController(Constants.ArmConstants.WristkP,
                                                                         Constants.ArmConstants.WristkI,
@@ -79,15 +73,9 @@ public class ClawSubsystem extends SubsystemBase {
 
     }
 
-    // public void initDefaultCommand() {
-    //     setDefaultCommand(new DefualtClawCmd(this));
-    // }
-
     public void toggleManualControl() {
         isManualMode = !isManualMode;
     }
-    
-    // Wrist code
 
     public double getWristPosition() {
         double currentPos = -wristMotor.getEncoder().getPosition();
@@ -117,10 +105,6 @@ public class ClawSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("claw pid output", pidOutput);
     }
 
-    // end wrist code
-
-    // claw code
-
     public void clawClose() {
         clawSolenoid.set(DoubleSolenoid.Value.kForward);
     }
@@ -145,10 +129,7 @@ public class ClawSubsystem extends SubsystemBase {
         return Commands.runOnce(() -> clawOff());
     }
 
-    // end claw code
-
-
-    // Vac Motor Code 
+    // Start of Vacuum Functions
 
     public void vacOn() {
         vacMotor.set(1);
@@ -175,6 +156,4 @@ public class ClawSubsystem extends SubsystemBase {
             }
         });
     }
-
-    // end Vac Motor Code
 }
