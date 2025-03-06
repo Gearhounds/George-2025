@@ -9,12 +9,8 @@ public class ArmRotationCmd extends Command {
     
     private final ArmSubsystem armSystem;
     private double setPosPercent;
-
-    
-    private boolean isDone = false;
     
     public ArmRotationCmd (ArmSubsystem armSubsystem, Supplier<Double> percent) {
-
         armSystem = armSubsystem;
         setPosPercent = percent.get();
         addRequirements(armSystem);

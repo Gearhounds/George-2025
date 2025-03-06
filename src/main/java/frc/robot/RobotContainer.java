@@ -34,7 +34,7 @@ public class RobotContainer {
 
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(driverLeft, driverRight);
   private final ArmSubsystem armSubsystem = new ArmSubsystem(opController);
-  private final ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(opController);
+  public final ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(opController);
   private final ClawSubsystem clawSubsystem = new ClawSubsystem(opController, compressor);
 
   private final JoystickButton opButtonA = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_A);

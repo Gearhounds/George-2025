@@ -8,9 +8,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
+import frc.robot.commands.DebugExtendCmd;
 import frc.robot.commands.DefaultExtensionCommand;
 import frc.robot.commands.ExtendToPercentageCmd;
 
@@ -42,7 +44,6 @@ public class ExtensionSubsystem extends SubsystemBase{
         isManualMode = true;
 
         SmartDashboard.putNumber("Extend Set", 0);
-        SmartDashboard.putData("Extend", new ExtendToPercentageCmd(this, () -> 0.0));
 
         setDefaultCommand(new DefaultExtensionCommand(this));
     }
@@ -88,11 +89,11 @@ public class ExtensionSubsystem extends SubsystemBase{
                 stopExtension();
             }
         } else {
-            setArmExtensionPos();
+            runArmToSetPoint();
         }
     }
 
-    public void setArmExtensionPos() {
+    public void runArmToSetPoint() {
         extensionPIDOutput = armLengthPidController.calculate(getArmExtension(), desiredExtensionPos);
         extenderMotor.set(-extensionPIDOutput);
     }
@@ -108,6 +109,19 @@ public class ExtensionSubsystem extends SubsystemBase{
     public void retractArm() {
         extenderMotor.set(EXTENSION_SPEED);
     }
+
+    public Command getExtendToZeroCmd() {
+        return new ExtendToPercentageCmd(this, () -> 0.0);
+    }
+
+    public Command getExtendToMaxCmd() {
+        return new ExtendToPercentageCmd(this, () -> 1.0);
+    }
+
+    public Command getExtendToDebugCmd() {
+        return new DebugExtendCmd(this);
+    }
+    
 
     
 }
