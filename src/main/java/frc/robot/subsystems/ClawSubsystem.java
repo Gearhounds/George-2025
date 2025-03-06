@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
 import frc.robot.commands.DefualtClawCmd;
+import frc.robot.commands.WristRotationCmd;
 
 public class ClawSubsystem extends SubsystemBase {
     private final SparkMax wristMotor = new SparkMax(Constants.ArmConstants.kWristMotorID, MotorType.kBrushed);
@@ -40,7 +41,7 @@ public class ClawSubsystem extends SubsystemBase {
                                                                         Constants.ArmConstants.WristkI,
                                                                         Constants.ArmConstants.WristkD);
 
-    private double desiredRotationPercentage;
+    public double desiredRotationPercentage;
     private boolean isManualMode;
 
     public ClawSubsystem (XboxController opController, Compressor compressor) {
@@ -56,6 +57,11 @@ public class ClawSubsystem extends SubsystemBase {
         wristPidController.setTolerance(0.01);
 
         compressor.enableAnalog(90, 100);
+
+        SmartDashboard.putNumber("Claw Set Rotation", 0);
+        SmartDashboard.putData("Claw Zero",new WristRotationCmd(this, () -> 0.0));
+        SmartDashboard.putData("Claw 100",new WristRotationCmd(this, () -> 1.0));
+        SmartDashboard.putData("Claw 50",new WristRotationCmd(this, () -> 0.5));
 
         setDefaultCommand(new DefualtClawCmd(this));
     }
