@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ExtensionSubsystem;
 
 public class DebugExtendCmd extends Command {
-    
+     
     private final ExtensionSubsystem extensionSystem;
     private double setPosPercent;
     

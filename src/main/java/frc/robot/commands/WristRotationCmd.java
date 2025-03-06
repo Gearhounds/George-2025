@@ -21,13 +21,13 @@ public class WristRotationCmd extends Command  {
 
     @Override
     public void initialize() {
+        setPosPercent = SmartDashboard.getNumber("Claw Set Rotation", 0);
         if (setPosPercent < 0 || setPosPercent > 1) {
             // dont allow invalid %
             setPosPercent = clawSystem.getWristPosition();
         } else {
             clawSystem.desiredRotationPercentage = setPosPercent;
-        }
-        // clawSystem.desiredRotationPercentage = SmartDashboard.getNumber("Claw Set Rotation", 0);
+        } 
     }
 
     @Override

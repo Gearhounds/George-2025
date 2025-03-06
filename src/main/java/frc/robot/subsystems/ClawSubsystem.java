@@ -9,6 +9,8 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -51,7 +53,7 @@ public class ClawSubsystem extends SubsystemBase {
         
         
         desiredRotationPercentage = 0;
-        wristConfig.inverted(false).idleMode(IdleMode.kBrake);
+        wristConfig.inverted(true).idleMode(IdleMode.kBrake);
         wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         wristPidController.setTolerance(0.01);
@@ -89,7 +91,7 @@ public class ClawSubsystem extends SubsystemBase {
 
     public double getWristPosition() {
         double currentPos = -wristMotor.getEncoder().getPosition();
-        currentPos = MathHelp.map(currentPos, 0, .600000023, 0, 1);
+        currentPos = MathHelp.map(currentPos, 0, -.6, 0, 1);
         return currentPos;
     }
 
@@ -102,7 +104,7 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void setWristSpeed() {
-        wristMotor.set(-opController.getRightY()); 
+        wristMotor.set(MathUtil.applyDeadband(-opController.getRightY(), 0.07)); 
     }
 
 

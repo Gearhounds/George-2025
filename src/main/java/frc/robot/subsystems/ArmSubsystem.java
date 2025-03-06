@@ -34,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
     public final SparkFlexConfig rightConfig = new SparkFlexConfig();
     public final SparkFlexConfig leftConfig = new SparkFlexConfig();
 
-    public final RelativeEncoder armEncoder = rightMotor.getEncoder();
+    public final RelativeEncoder armEncoder = leftMotor.getEncoder();
     public final EncoderConfig encoderConfig = new EncoderConfig();
 
     private double armAnglePIDOutput; // this is the speed of the motor after being run through PID

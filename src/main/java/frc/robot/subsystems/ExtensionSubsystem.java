@@ -70,7 +70,7 @@ public class ExtensionSubsystem extends SubsystemBase{
 
     public double getArmExtension() {
         double currentPos = extenderMotor.getEncoder().getPosition();
-        currentPos = MathHelp.map(currentPos, -10, -210, 0, 1);
+        currentPos = MathHelp.map(currentPos, -10, -100, 0, 1);
         currentPos = currentPos < 0 ? 0 : currentPos;
         return currentPos;
     }
