@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
@@ -45,7 +46,7 @@ public class ExtensionSubsystem extends SubsystemBase{
 
         SmartDashboard.putNumber("Extend Set", 0);
 
-        setDefaultCommand(new DefaultExtensionCommand(this));
+        CommandScheduler.getInstance().setDefaultCommand(this, new DefaultExtensionCommand(this));
     }
 
     @Override
@@ -70,8 +71,8 @@ public class ExtensionSubsystem extends SubsystemBase{
 
     public double getArmExtension() {
         double currentPos = extenderMotor.getEncoder().getPosition();
-        currentPos = MathHelp.map(currentPos, -10, -100, 0, 1);
-        currentPos = currentPos < 0 ? 0 : currentPos;
+        currentPos = MathHelp.map(currentPos, -10, -165, 0, 1);
+        // currentPos = currentPos < 0 ? 0 : currentPos;
         return currentPos;
     }
 
@@ -120,7 +121,7 @@ public class ExtensionSubsystem extends SubsystemBase{
     }
 
     public Command getExtendToDebugCmd() {
-        return new DebugExtendCmd(this);
+        return new DebugExtendCmd(this, ()->0.0);
     }
     
 

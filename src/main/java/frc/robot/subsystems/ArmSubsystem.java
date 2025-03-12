@@ -21,10 +21,12 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
+import frc.robot.commands.ArmRotationCmd;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.DefaultArmCmd;
 
@@ -62,8 +64,10 @@ public class ArmSubsystem extends SubsystemBase {
         controllerGettingInput = false;
         atLimit = false;
 
-        desiredArmAnglePercentage = 0;
+        desiredArmAnglePercentage = getArmAngle();
         this.opController = opController;
+
+        armAnglePidController.setTolerance(0.05);
 
         rightConfig
             .inverted(true)
@@ -80,7 +84,11 @@ public class ArmSubsystem extends SubsystemBase {
 
         zeroArmPos();
 
-        setDefaultCommand(new DefaultArmCmd(this));
+        SmartDashboard.putNumber("Arm Angle PID SET", 0);
+        SmartDashboard.putData("Arm Angle Debug PID", new ArmRotationCmd(this, () -> 0.0));
+
+    
+        CommandScheduler.getInstance().setDefaultCommand(this, new DefaultArmCmd(this));
     }
 
     public void periodic() {
@@ -134,7 +142,12 @@ public class ArmSubsystem extends SubsystemBase {
     public void runArmPID() {
         double rawPID = armAnglePidController.calculate(getArmAngle(), desiredArmAnglePercentage);
         armAnglePIDOutput = rawPID < 0 ? rawPID / 2 : rawPID; // limit the speed of the arm when going down
+        // armAnglePIDOutput = getArmAngle() > 0.8 ? rawPID/2 : rawPID;
         rightMotor.set(armAnglePIDOutput);
+    }
+
+    public void setAesiredArmAnglePercentageToCurrent() {
+        desiredArmAnglePercentage = getArmAngle();
     }
 
     public void climbOn() {

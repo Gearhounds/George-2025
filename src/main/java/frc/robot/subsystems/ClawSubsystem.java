@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -48,7 +49,7 @@ public class ClawSubsystem extends SubsystemBase {
         controllerGettingInput = false;
         
         
-        desiredRotationPercentage = 0;
+        desiredRotationPercentage = getWristPosition();
         wristConfig.inverted(true).idleMode(IdleMode.kBrake);
         wristMotor.configure(wristConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
@@ -61,7 +62,7 @@ public class ClawSubsystem extends SubsystemBase {
         SmartDashboard.putData("Claw 100",new WristRotationCmd(this, () -> 1.0));
         SmartDashboard.putData("Claw 50",new WristRotationCmd(this, () -> 0.5));
 
-        setDefaultCommand(new DefualtClawCmd(this));
+        CommandScheduler.getInstance().setDefaultCommand(this, new DefualtClawCmd(this));
     }
 
     @Override
@@ -82,7 +83,7 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public double getWristPosition() {
-        double currentPos = -wristMotor.getEncoder().getPosition();
+        double currentPos = wristMotor.getEncoder().getPosition();
         currentPos = MathHelp.map(currentPos, 0, -.6, 0, 1);
         return currentPos;
     }
@@ -96,7 +97,8 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void setWristSpeed() {
-        wristMotor.set(MathUtil.applyDeadband(-opController.getRightY(), 0.07)); 
+        wristMotor.set(MathUtil.applyDeadband(-opController.getRightY(), 0.07) * 0.75); 
+        desiredRotationPercentage = getWristPosition();
     }
 
 

@@ -18,7 +18,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-
+    CameraServer.startAutomaticCapture();
     SmartDashboard.putData("Debug Extend Cmd", m_robotContainer.extensionSubsystem.getExtendToDebugCmd());
     SmartDashboard.putData("Extend To Zero", m_robotContainer.extensionSubsystem.getExtendToZeroCmd());
     SmartDashboard.putData("Extend To Max", m_robotContainer.extensionSubsystem.getExtendToMaxCmd());
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("Claw Sensor", m_robotContainer.clawSen.get());
-    CameraServer.startAutomaticCapture();
+    
   }
 
   @Override

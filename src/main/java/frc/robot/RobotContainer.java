@@ -14,12 +14,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmRotationCmd;
 import frc.robot.commands.BasicAutoDriveCmd;
 import frc.robot.commands.ClimbCmd;
+import frc.robot.commands.DebugExtendCmd;
+import frc.robot.commands.FullArmControlCmd;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.WristRotationCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ExtensionSubsystem;
@@ -72,6 +76,14 @@ public class RobotContainer {
 
   private boolean isAutoControl = false;
 
+  private SequentialCommandGroup armToL4 = new SequentialCommandGroup(new ArmRotationCmd(armSubsystem, () -> 0.85),
+                                                                      new DebugExtendCmd(extensionSubsystem, () -> 1.0),
+                                                                      new WristRotationCmd(clawSubsystem, () -> 0.75));
+  
+  private SequentialCommandGroup armToZero = new SequentialCommandGroup(new ArmRotationCmd(armSubsystem, () -> 0.0),
+                                                                      new DebugExtendCmd(extensionSubsystem, () -> 0.0),
+                                                                      new WristRotationCmd(clawSubsystem, () -> 0.3));
+
   public RobotContainer() {
     opController.getLeftY();
     
@@ -99,6 +111,8 @@ public class RobotContainer {
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
     
+    opLeftBumper.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->0.0, ()->0.25));
+    opRightBumper.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
 
     // Manual Controls
 
