@@ -33,6 +33,7 @@ public class RobotContainer {
   private final XboxController opController = new XboxController(0);
   private final Joystick driverLeft = new Joystick(1);
   private final Joystick driverRight = new Joystick(2);
+  private final Joystick buttonBoard = new Joystick(3);
 
   private final Compressor compressor = new Compressor(21, PneumaticsModuleType.REVPH);
 
@@ -59,6 +60,13 @@ public class RobotContainer {
   private final JoystickButton driverLeftTrigger = new JoystickButton(driverLeft, 2);
   private final JoystickButton driverRightPinky = new JoystickButton(driverRight, 5);
 
+  private final JoystickButton vacSwitch = new JoystickButton(buttonBoard, 11);
+  private final JoystickButton armToLoad = new JoystickButton(buttonBoard, 5);
+  private final JoystickButton armToZero = new JoystickButton(buttonBoard, 3);
+  private final JoystickButton armToL1 = new JoystickButton(buttonBoard, 9);
+  private final JoystickButton armToL2 = new JoystickButton(buttonBoard, 8);
+  private final JoystickButton armToL3 = new JoystickButton(buttonBoard, 7);
+
   private final Trigger shouldExtend = new Trigger(() -> {
     return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
   });  
@@ -76,14 +84,7 @@ public class RobotContainer {
 
   private boolean isAutoControl = false;
 
-  private SequentialCommandGroup armToL4 = new SequentialCommandGroup(new ArmRotationCmd(armSubsystem, () -> 0.85),
-                                                                      new DebugExtendCmd(extensionSubsystem, () -> 1.0),
-                                                                      new WristRotationCmd(clawSubsystem, () -> 0.75));
   
-  private SequentialCommandGroup armToZero = new SequentialCommandGroup(new ArmRotationCmd(armSubsystem, () -> 0.0),
-                                                                      new DebugExtendCmd(extensionSubsystem, () -> 0.0),
-                                                                      new WristRotationCmd(clawSubsystem, () -> 0.3));
-
   public RobotContainer() {
     opController.getLeftY();
     
@@ -111,8 +112,11 @@ public class RobotContainer {
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
     
-    opLeftBumper.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->0.0, ()->0.25));
-    opRightBumper.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
+    armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.1, ()->0.0));
+    armToZero.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->-0.1, ()->0.25));
+    armToL1.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.4, ()->0.0, ()->0.2));
+    armToL2.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.0, ()->1.0));
+    armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
 
     // Manual Controls
 
@@ -150,7 +154,7 @@ public class RobotContainer {
 
     // Vacuum Bindings
 
-    opButtonY.onChange(clawSubsystem.getToggleVacCommand());
+    vacSwitch.onChange(clawSubsystem.getToggleVacCommand());
 
 
 

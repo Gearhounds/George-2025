@@ -21,12 +21,13 @@ public class DebugExtendCmd extends Command {
     @Override
     public void initialize() {
         // setPosPercent = SmartDashboard.getNumber("Extend Set", 0);
-        if (setPosPercent < 0 || setPosPercent > 1) {
-            // dont allow invalid %
-            extensionSystem.desiredExtensionPos = extensionSystem.getArmExtension();
-        } else {
-            extensionSystem.desiredExtensionPos = setPosPercent;
-        }
+        // if (setPosPercent < 0 || setPosPercent > 1) {
+        //     // dont allow invalid %
+        //     extensionSystem.desiredExtensionPos = extensionSystem.getArmExtension();
+        // } else {
+        //     extensionSystem.desiredExtensionPos = setPosPercent;
+        // }
+        extensionSystem.desiredExtensionPos = setPosPercent;
     }
 
     @Override
