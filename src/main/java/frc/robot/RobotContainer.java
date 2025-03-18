@@ -4,27 +4,43 @@
 
 package frc.robot;
 
+import java.security.cert.Extension;
+
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ArmExtensionCmd;
+import frc.robot.commands.ArmRotationCmd;
+import frc.robot.commands.BasicAutoDriveCmd;
 import frc.robot.commands.ClimbCmd;
+import frc.robot.commands.DebugExtendCmd;
+import frc.robot.commands.FullArmControlCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.commands.ToggleClawCmd;
+import frc.robot.commands.WristRotationCmd;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.ExtensionSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
-  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
-
   private final XboxController opController = new XboxController(0);
   private final Joystick driverLeft = new Joystick(1);
   private final Joystick driverRight = new Joystick(2);
+  private final Joystick buttonBoard = new Joystick(3);
+
+  private final Compressor compressor = new Compressor(21, PneumaticsModuleType.REVPH);
+
+  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(driverLeft, driverRight);
+  private final ArmSubsystem armSubsystem = new ArmSubsystem(opController);
+  public final ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(opController);
+  private final ClawSubsystem clawSubsystem = new ClawSubsystem(opController, compressor);
 
   private final JoystickButton opButtonA = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_A);
   private final JoystickButton opButtonB = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_B);
@@ -38,50 +54,147 @@ public class RobotContainer {
   private final JoystickButton opLeftStickDown = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFTSTICK_DOWN);
   private final Trigger opDPadUp = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_UP);
   private final Trigger opDPadDown = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_DOWN);
+  private final JoystickButton driverRightRed = new JoystickButton(driverRight, 3);
+  private final JoystickButton driverLeftRed = new JoystickButton(driverLeft, 3);
+  private final JoystickButton driverRightTrigger = new JoystickButton(driverRight, 2);
+  private final JoystickButton driverLeftTrigger = new JoystickButton(driverLeft, 2);
+  private final JoystickButton driverRightPinky = new JoystickButton(driverRight, 5);
 
+  private final JoystickButton vacSwitch = new JoystickButton(buttonBoard, 11);
+  private final JoystickButton armToLoad = new JoystickButton(buttonBoard, 5);
+  private final JoystickButton armToZero = new JoystickButton(buttonBoard, 3);
+  private final JoystickButton armToL1 = new JoystickButton(buttonBoard, 9);
+  private final JoystickButton armToL2 = new JoystickButton(buttonBoard, 8);
+  private final JoystickButton armToL3 = new JoystickButton(buttonBoard, 7);
+  private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 6);
+
+  private final Trigger shouldExtend = new Trigger(() -> {
+    return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
+  });  
+  private final Trigger shouldRetract = new Trigger(() -> {
+    return (opController.getLeftTriggerAxis() > 0.1 && opController.getRightTriggerAxis() < .1);
+  });  
+
+
+  public DigitalInput clawSen = new DigitalInput(6);
+  private final Trigger clawSensor = new Trigger(() -> clawSen.get());
+  // public DigitalInput armSen = new DigitalInput(9);
+  // private final Trigger armSensor = new Trigger(() -> !armSen.get());
+
+  private final Trigger extensionStopped = new Trigger(() -> !(opLeftBumper.getAsBoolean() || opRightBumper.getAsBoolean()));
+
+  private boolean isAutoControl = false;
+
+  
   public RobotContainer() {
     opController.getLeftY();
+    
     swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
       swerveSubsystem,
       () -> driverLeft.getRawAxis(1), 
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> true));
-    // armSubsystem.setDefaultCommand(new ArmExtensionCmd(armSubsystem, () -> 0.0));
-      SmartDashboard.putBoolean("Running Robot Container", true);
+
+  
     configureBindings();
   }
 
   private void configureBindings() {
-    new JoystickButton(driverRight, 1).onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+    // Zero robot yaw
+    driverRightTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+    driverLeftTrigger.onTrue(new SwerveJoystickCmd(
+      swerveSubsystem,
+      () -> driverLeft.getRawAxis(1), 
+      () -> driverLeft.getRawAxis(0), 
+      () -> -driverRight.getRawAxis(0), 
+      () -> false));
+      driverLeftTrigger.onFalse(new SwerveJoystickCmd(
+        swerveSubsystem,
+        () -> driverLeft.getRawAxis(1), 
+        () -> driverLeft.getRawAxis(0), 
+        () -> -driverRight.getRawAxis(0), 
+        () -> true));
 
-
-    opDPadUp.onTrue(new ArmExtensionCmd(armSubsystem, () -> .9));
-
-    opButtonB.whileTrue(Commands.run(() -> armSubsystem.setWristSpeed(opController.getRightY())));
-
-    opButtonX.whileTrue(Commands.run(() -> armSubsystem.setArmSpeed(-opController.getLeftY())));
-    opButtonX.whileFalse(Commands.run(() -> armSubsystem.stopArm()));
+    // Toggle between manual and auto control
+    opButtonA.onTrue(getToggleManualControlCommand());
     
-    // new Trigger(() -> opController.getLeftBumperButton() || opController.getRightBumperButton()).onTrue(new ArmExtensionCmd(armSubsystem, () -> opController.getLeftBumperButton(), () -> opController.getRightBumperButton()));
-    // new JoystickButton(opController, 5).whileTrue(Commands.run(() -> armSubsystem.retractArm()));
-    // new JoystickButton(opController, 6).whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.1, ()->0.0));
+    armToZero.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->0.0, ()->0.25));
+    armToL1.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.4, ()->0.0, ()->0.2));
+    armToL2.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.0, ()->1.0));
+    armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
+    armToL4.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.85, ()->1.0, ()->0.75));
 
-    opLeftBumper.whileTrue(Commands.run(() -> armSubsystem.retractArm()));
-    opRightBumper.whileTrue(Commands.run(() -> armSubsystem.extendArm()));
+    // Manual Controls
 
-    opButtonY.whileTrue(Commands.run(() -> armSubsystem.vacOn()));
-    opButtonY.whileFalse(Commands.run(() -> armSubsystem.vacOff()));
+    // Manual Arm Rotation Control
+    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
+    // new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.runArmManual()));
+
+    // Manual Wrist Rotation Control
+    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
+    // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
+
+
+    // armSensor.onChange(Commands.runOnce(() -> armSubsystem.toggleAtLimit()));
+
+    // extension bindings
     
-    opRightLittle.onTrue(new ToggleClawCmd(armSubsystem));
+    
+    
+    
+    
+    
+    
+    // end extension bindings
+    
+    // claw bindings
+    
+    driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
+    driverRightPinky.onTrue(clawSubsystem.getCloseClawCommand());
+    clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
 
-    opRightStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.9));
-    opLeftStickDown.onTrue(new ArmExtensionCmd(armSubsystem, () -> 0.1));
-    // opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
-    // opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
+
+
+
+    // end claw bindings
+
+    // Vacuum Bindings
+
+    vacSwitch.onChange(clawSubsystem.getToggleVacCommand());
+
+
+
+
+
+
+
+
+    // End Manual Controls
+
+
+
+
+    // Start Controls
+
+    // Stop Arm
+    
+
+    // Open and Close Climb
+    opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
+    opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
+  }
+
+  public Command getToggleManualControlCommand() {
+    return Commands.runOnce(() -> {
+      armSubsystem.toggleManualControl();
+      extensionSubsystem.toggleManualControl();
+      clawSubsystem.toggleManualControl();
+    });
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
   }
 }

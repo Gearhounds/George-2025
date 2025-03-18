@@ -37,13 +37,17 @@ public class Constants {
         public static final int kVacMotorID = 41;
         public static final double kArmGearRatio = 1 / 273.28;
 
-        public static final double AnglekP = 0.005;
+        public static final double AnglekP = 2;
         public static final double AnglekI = 0;
-        public static final double AnglekD = 0;
+        public static final double AnglekD = 0.5;
 
         public static final double LengthkP = 5;
         public static final double LengthkI = 0;
         public static final double LengthkD = 0;
+
+        public static final double WristkP = 5;
+        public static final double WristkI = 0;
+        public static final double WristkD = 0;
     }
     
     public static final class ModuleConstants {
@@ -92,10 +96,10 @@ public class Constants {
         public static final int kFrontRightDriveMotorPort = 13;
         public static final int kFrontRightTurningMotorPort = 3;
         public static final boolean kFrontRightDriveEncoderReversed = true;
-        public static final boolean kFrontRightTurningEncoderReversed = false;
+        public static final boolean kFrontRightTurningEncoderReversed = true;
         public static final int kFrontRightAbsEncoderPort = 12;
         public static final double kFrontRightAbsEncoderOffsetRad = 0;
-        public static final boolean kFrontRightAbsEncoderReversed = true;
+        public static final boolean kFrontRightAbsEncoderReversed = false;
 
         // BACK LEFT
         public static final int kBackLeftDriveMotorPort = 12;

@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DebugExtendCmd;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -15,11 +18,18 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
+    SmartDashboard.putData("Debug Extend Cmd", m_robotContainer.extensionSubsystem.getExtendToDebugCmd());
+    SmartDashboard.putData("Extend To Zero", m_robotContainer.extensionSubsystem.getExtendToZeroCmd());
+    SmartDashboard.putData("Extend To Max", m_robotContainer.extensionSubsystem.getExtendToMaxCmd());
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    SmartDashboard.putBoolean("Claw Sensor", m_robotContainer.clawSen.get());
+    
   }
 
   @Override
