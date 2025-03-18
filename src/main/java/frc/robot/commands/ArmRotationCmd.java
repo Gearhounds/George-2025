@@ -34,8 +34,6 @@ public class ArmRotationCmd extends Command {
     @Override
     public void execute() {
         armSystem.runArmPID();
-
-
     }
 
     @Override

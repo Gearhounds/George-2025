@@ -37,7 +37,8 @@ public class DebugExtendCmd extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        // CommandScheduler.getInstance().schedule(new DefaultExtensionCommand(extensionSystem));
+        System.out.println("Extension CMD Done");
+        CommandScheduler.getInstance().schedule(new DefaultExtensionCommand(extensionSystem));
     }
 
     @Override

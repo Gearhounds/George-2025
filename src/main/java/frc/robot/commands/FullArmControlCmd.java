@@ -9,7 +9,7 @@ import frc.robot.subsystems.ExtensionSubsystem;
 
 
 
-public class FullArmControlCmd extends ParallelCommandGroup{
+public class FullArmControlCmd extends ParallelCommandGroup {
    
     public FullArmControlCmd (ArmSubsystem armSubsystem, ClawSubsystem clawSubsystem,
                               ExtensionSubsystem extensionSubsystem, 
@@ -19,7 +19,7 @@ public class FullArmControlCmd extends ParallelCommandGroup{
 
         addCommands(new ArmRotationCmd(armSubsystem, armRotation),
                     new WristRotationCmd(clawSubsystem, clawRotation),
-                    new DebugExtendCmd(extensionSubsystem, extension));
+                    new ExtendToPercentageCmd(extensionSubsystem, extension));
 
     }
 }

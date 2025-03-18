@@ -66,6 +66,7 @@ public class RobotContainer {
   private final JoystickButton armToL1 = new JoystickButton(buttonBoard, 9);
   private final JoystickButton armToL2 = new JoystickButton(buttonBoard, 8);
   private final JoystickButton armToL3 = new JoystickButton(buttonBoard, 7);
+  private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 6);
 
   private final Trigger shouldExtend = new Trigger(() -> {
     return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
@@ -108,15 +109,22 @@ public class RobotContainer {
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> false));
+      driverLeftTrigger.onFalse(new SwerveJoystickCmd(
+        swerveSubsystem,
+        () -> driverLeft.getRawAxis(1), 
+        () -> driverLeft.getRawAxis(0), 
+        () -> -driverRight.getRawAxis(0), 
+        () -> true));
 
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
     
     armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.1, ()->0.0));
-    armToZero.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->-0.1, ()->0.25));
+    armToZero.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->0.0, ()->0.25));
     armToL1.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.4, ()->0.0, ()->0.2));
     armToL2.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.0, ()->1.0));
     armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
+    armToL4.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.85, ()->1.0, ()->0.75));
 
     // Manual Controls
 

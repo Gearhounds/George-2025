@@ -71,17 +71,18 @@ public class ExtensionSubsystem extends SubsystemBase{
 
     public double getArmExtension() {
         double currentPos = extenderMotor.getEncoder().getPosition();
-        currentPos = MathHelp.map(currentPos, -10, -165, 0, 1);
+        currentPos = MathHelp.map(currentPos, 0, -160, 0, 1);
         // currentPos = currentPos < 0 ? 0 : currentPos;
         return currentPos;
     }
 
     public void manualArmExtension(double speed) {
         extenderMotor.set(speed);
+        desiredExtensionPos = getArmExtension();
     }
 
     public void runExtension() {
-        if (isManualMode) {
+        if (isManualMode && (extendSpeed > 0 || retractSpeed > 0)) {
             if (extendSpeed > 0.1 && retractSpeed < .1) {
                 manualArmExtension(-extendSpeed);
             } else if (retractSpeed > 0.1 && extendSpeed < .1) {

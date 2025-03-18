@@ -14,7 +14,6 @@ public class WristRotationCmd extends Command  {
 
     
     public WristRotationCmd (ClawSubsystem clawSubsystem, Supplier<Double> percent) {
-
         clawSystem = clawSubsystem;
         setPosPercent = percent.get();
         addRequirements(clawSystem);
