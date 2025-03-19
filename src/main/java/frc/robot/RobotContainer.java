@@ -67,6 +67,7 @@ public class RobotContainer {
   private final JoystickButton armToL2 = new JoystickButton(buttonBoard, 8);
   private final JoystickButton armToL3 = new JoystickButton(buttonBoard, 7);
   private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 6);
+  private final JoystickButton armToAlgae = new JoystickButton(buttonBoard, 4);
 
   private final Trigger shouldExtend = new Trigger(() -> {
     return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
@@ -125,6 +126,8 @@ public class RobotContainer {
     armToL2.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.0, ()->1.0));
     armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
     armToL4.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.85, ()->1.0, ()->0.75));
+
+    armToAlgae.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.2, ()->0.7));
 
     // Manual Controls
 
