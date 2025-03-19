@@ -22,6 +22,7 @@ import frc.robot.commands.BasicAutoDriveCmd;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.DebugExtendCmd;
 import frc.robot.commands.FullArmControlCmd;
+import frc.robot.commands.ResetArmCmd;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.WristRotationCmd;
 import frc.robot.subsystems.ArmSubsystem;
@@ -120,8 +121,8 @@ public class RobotContainer {
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
     
-    armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.1, ()->0.0));
-    armToZero.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.0, ()->0.0, ()->0.25));
+    // armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.1, ()->0.0));
+    armToZero.onTrue(new ResetArmCmd(armSubsystem, clawSubsystem, extensionSubsystem));
     armToL1.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.4, ()->0.0, ()->0.2));
     armToL2.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.0, ()->1.0));
     armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
