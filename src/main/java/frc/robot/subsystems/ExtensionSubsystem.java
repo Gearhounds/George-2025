@@ -40,7 +40,7 @@ public class ExtensionSubsystem extends SubsystemBase{
         armLengthPidController.setTolerance(0.01);
         retractSpeed = 0;
         extendSpeed = 0;
-        desiredExtensionPos = 0;
+        desiredExtensionPos = 0.05;
         extensionPIDOutput = 0;
         isManualMode = true;
 
