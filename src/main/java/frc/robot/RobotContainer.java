@@ -50,7 +50,6 @@ public class RobotContainer {
   private final JoystickButton opLeftLittle = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFT_LITTLE);
   private final JoystickButton opRightBumper = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_RIGHT_BUMPBER);
   private final JoystickButton opLeftBumper = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFT_BUMPER);
-  private final JoystickButton opRightStickDown = new JoystickButton(opController, 9);
   private final JoystickButton opLeftStickDown = new JoystickButton(opController, Constants.ControlConstants.OP_STICK_LEFTSTICK_DOWN);
   private final Trigger opDPadUp = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_UP);
   private final Trigger opDPadDown = new Trigger(() -> opController.getPOV() == Constants.ControlConstants.OP_STICK_DPAD_DOWN);
@@ -59,15 +58,16 @@ public class RobotContainer {
   private final JoystickButton driverRightTrigger = new JoystickButton(driverRight, 2);
   private final JoystickButton driverLeftTrigger = new JoystickButton(driverLeft, 2);
   private final JoystickButton driverRightPinky = new JoystickButton(driverRight, 5);
-
+  
+  private final JoystickButton climbButton = new JoystickButton(buttonBoard, 10);
   private final JoystickButton vacSwitch = new JoystickButton(buttonBoard, 11);
-  private final JoystickButton armToLoad = new JoystickButton(buttonBoard, 1);
-  private final JoystickButton armToZero = new JoystickButton(buttonBoard, 5);
-  private final JoystickButton armToL1 = new JoystickButton(buttonBoard, 8);
-  private final JoystickButton armToL2 = new JoystickButton(buttonBoard, 6);
-  private final JoystickButton armToL3 = new JoystickButton(buttonBoard, 4);
-  private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 2);
-  private final JoystickButton armToAlgae = new JoystickButton(buttonBoard, 3);
+  private final JoystickButton armToLoad = new JoystickButton(buttonBoard, 2);
+  private final JoystickButton armToZero = new JoystickButton(buttonBoard, 8);
+  private final JoystickButton armToL1 = new JoystickButton(buttonBoard, 7);
+  private final JoystickButton armToL2 = new JoystickButton(buttonBoard, 5);
+  private final JoystickButton armToL3 = new JoystickButton(buttonBoard, 3);
+  private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 1);
+  private final JoystickButton armToAlgae = new JoystickButton(buttonBoard, 4);
 
   private final Trigger shouldExtend = new Trigger(() -> {
     return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
@@ -185,8 +185,8 @@ public class RobotContainer {
     
 
     // Open and Close Climb
-    opRightStickDown.whileTrue(new ClimbCmd(armSubsystem, true));
-    opRightStickDown.whileFalse(new ClimbCmd(armSubsystem, false));
+    climbButton.whileTrue(new ClimbCmd(armSubsystem, true));
+    climbButton.whileFalse(new ClimbCmd(armSubsystem, false));
   }
 
   public Command getToggleManualControlCommand() {
