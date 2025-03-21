@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     CameraServer.startAutomaticCapture();
-    // CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
     SmartDashboard.putData("Debug Extend Cmd", m_robotContainer.extensionSubsystem.getExtendToDebugCmd());
     SmartDashboard.putData("Extend To Zero", m_robotContainer.extensionSubsystem.getExtendToZeroCmd());
     SmartDashboard.putData("Extend To Max", m_robotContainer.extensionSubsystem.getExtendToMaxCmd());
