@@ -60,7 +60,8 @@ public class RobotContainer {
   private final JoystickButton driverLeftTrigger = new JoystickButton(driverLeft, 2);
   private final JoystickButton driverRightPinky = new JoystickButton(driverRight, 5);
   
-  private final JoystickButton climbButton = new JoystickButton(buttonBoard, 10);
+  private final JoystickButton climbButton = new JoystickButton(buttonBoard, 9);
+  private final JoystickButton climbClawButton = new JoystickButton(buttonBoard, 10);
   private final JoystickButton vacSwitch = new JoystickButton(buttonBoard, 11);
   private final JoystickButton armToLoad = new JoystickButton(buttonBoard, 2);
   private final JoystickButton armToZero = new JoystickButton(buttonBoard, 8);
@@ -131,6 +132,9 @@ public class RobotContainer {
 
     armToAlgae.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.2, ()->0.7));
 
+    climbButton.whileTrue(armSubsystem.getClimbCmd());
+    climbButton.whileFalse(armSubsystem.getClimbStopCmd());
+    
     // Manual Controls
 
     // Manual Arm Rotation Control
@@ -187,8 +191,8 @@ public class RobotContainer {
     
 
     // Open and Close Climb
-    climbButton.whileTrue(new ClimbCmd(armSubsystem, true));
-    climbButton.whileFalse(new ClimbCmd(armSubsystem, false));
+    climbClawButton.whileTrue(new ClimbCmd(armSubsystem, true));
+    climbClawButton.whileFalse(new ClimbCmd(armSubsystem, false));
   }
 
   public Command getToggleManualControlCommand() {

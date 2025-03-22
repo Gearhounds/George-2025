@@ -31,7 +31,7 @@ public class ClawSubsystem extends SubsystemBase {
     
     private final Compressor compressor;
     public final SparkMax vacMotor = new SparkMax(Constants.ArmConstants.kVacMotorID, MotorType.kBrushless);
-    
+
     public final DoubleSolenoid clawSolenoid = new DoubleSolenoid(21, PneumaticsModuleType.REVPH, 8, 12);
 
     public final PIDController wristPidController = new PIDController(Constants.ArmConstants.WristkP,

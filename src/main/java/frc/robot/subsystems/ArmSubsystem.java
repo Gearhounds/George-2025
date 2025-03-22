@@ -59,6 +59,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     public DigitalInput armSen = new DigitalInput(9);
 
+    public final SparkMax winchMotor = new SparkMax(35, MotorType.kBrushed);
+
     public ArmSubsystem(XboxController opController) {
         isManualMode = true;
         controllerGettingInput = false;
@@ -139,6 +141,16 @@ public class ArmSubsystem extends SubsystemBase {
         desiredArmAnglePercentage = getArmAngle();
     }
 
+    public void climb() {
+        winchMotor.set(-0.7);
+        rightMotor.set(-.5);
+    }
+
+    public void climbStop() {
+        winchMotor.stopMotor();
+        runArm();
+    }
+
     public void runArmPID() {
         double rawPID = armAnglePidController.calculate(getArmAngle(), desiredArmAnglePercentage);
         armAnglePIDOutput = rawPID < 0 ? rawPID / 2 : rawPID; // limit the speed of the arm when going down
@@ -164,5 +176,13 @@ public class ArmSubsystem extends SubsystemBase {
 
     public Command getClimbCloseCmd() {
         return new ClimbCmd(this, false);
+    }
+
+    public Command getClimbCmd() {
+        return Commands.runOnce(() -> climb());
+    }
+
+    public Command getClimbStopCmd() {
+        return Commands.runOnce(() -> climbStop());
     }
 }
