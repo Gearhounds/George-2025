@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.security.cert.Extension;
-
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -14,17 +12,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ArmRotationCmd;
 import frc.robot.commands.BasicAutoDriveCmd;
 import frc.robot.commands.ClimbCmd;
-import frc.robot.commands.DebugExtendCmd;
 import frc.robot.commands.FullArmControlCmd;
 import frc.robot.commands.ResetArmCmd;
 import frc.robot.commands.SwerveJoystickCmd;
-import frc.robot.commands.WristRotationCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ExtensionSubsystem;
@@ -70,22 +64,9 @@ public class RobotContainer {
   private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 1);
   private final JoystickButton armToAlgae = new JoystickButton(buttonBoard, 4);
 
-  private final Trigger shouldExtend = new Trigger(() -> {
-    return (opController.getRightTriggerAxis() > 0.1 && opController.getLeftTriggerAxis() < .1);
-  });  
-  private final Trigger shouldRetract = new Trigger(() -> {
-    return (opController.getLeftTriggerAxis() > 0.1 && opController.getRightTriggerAxis() < .1);
-  });  
-
 
   public DigitalInput clawSen = new DigitalInput(6);
   private final Trigger clawSensor = new Trigger(() -> clawSen.get());
-  // public DigitalInput armSen = new DigitalInput(9);
-  // private final Trigger armSensor = new Trigger(() -> !armSen.get());
-
-  private final Trigger extensionStopped = new Trigger(() -> !(opLeftBumper.getAsBoolean() || opRightBumper.getAsBoolean()));
-
-  private boolean isAutoControl = false;
 
   
   public RobotContainer() {
@@ -103,8 +84,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // Zero robot yaw
     driverRightTrigger.onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+  
     driverLeftTrigger.onTrue(new SwerveJoystickCmd(
       swerveSubsystem,
       () -> driverLeft.getRawAxis(1), 
@@ -130,61 +111,16 @@ public class RobotContainer {
     armToL4.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.85, ()->1.0, ()->0.75));
 
     armToAlgae.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.2, ()->0.7));
-
-    // Manual Controls
-
-    // Manual Arm Rotation Control
-    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> armSubsystem.setArmAngleSpeed(opController)));
-    // new Trigger(() -> true).whileTrue(Commands.runOnce(() -> armSubsystem.runArmManual()));
-
-    // Manual Wrist Rotation Control
-    // new Trigger(() -> true).and(() -> !isAutoControl).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
-    // new Trigger(() -> true).whileTrue(Commands.run(() -> clawSubsystem.setWristSpeed(opController)));
-
-
-    // armSensor.onChange(Commands.runOnce(() -> armSubsystem.toggleAtLimit()));
-
-    // extension bindings
     
-    
-    
-    
-    
-    
-    
-    // end extension bindings
-    
-    // claw bindings
-    
+    // claw bindings    
     driverRightRed.onTrue(clawSubsystem.getOpenClawCommand());
     driverRightPinky.onTrue(clawSubsystem.getCloseClawCommand());
     clawSensor.onFalse(clawSubsystem.getCloseClawCommand());
 
 
-
-
-    // end claw bindings
-
     // Vacuum Bindings
-
     vacSwitch.onChange(clawSubsystem.getToggleVacCommand());
 
-
-
-
-
-
-
-
-    // End Manual Controls
-
-
-
-
-    // Start Controls
-
-    // Stop Arm
-    
 
     // Open and Close Climb
     climbButton.whileTrue(new ClimbCmd(armSubsystem, true));
