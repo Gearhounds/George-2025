@@ -121,10 +121,11 @@ public class RobotContainer {
     // Toggle between manual and auto control
     opButtonA.onTrue(getToggleManualControlCommand());
     
-    armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.1, ()->0.0));
+    armToLoad.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.75, ()->0.15, ()->0.15));
     armToZero.onTrue(new ResetArmCmd(armSubsystem, clawSubsystem, extensionSubsystem));
-    armToL1.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.4, ()->0.0, ()->0.2));
+    armToL1.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.4, ()->0.0, ()->0.5));
     armToL2.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.0, ()->1.0));
+
     armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
     armToL4.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.85, ()->1.0, ()->0.75));
 
@@ -199,6 +200,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
+    return new BasicAutoDriveCmd(swerveSubsystem, -0.5, 2);
   }
 }
