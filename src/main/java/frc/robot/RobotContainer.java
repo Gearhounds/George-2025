@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -64,10 +65,17 @@ public class RobotContainer {
   private final JoystickButton armToL4 = new JoystickButton(buttonBoard, 1);
   private final JoystickButton armToAlgae = new JoystickButton(buttonBoard, 4);
 
-
   public DigitalInput clawSen = new DigitalInput(6);
   private final Trigger clawSensor = new Trigger(() -> clawSen.get());
 
+  // A simple auto routine that drives backward a specified time, and then stops.
+  private final Command driveBackwardAuto = new BasicAutoDriveCmd(swerveSubsystem, -0.5, 2);
+
+  // A simple auto routine that drives forward a specific time, and then stops.
+  private final Command driveForwardAuto = new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
+
+  // A chooser for autonomous commands
+  SendableChooser<Command> autoChooser = new SendableChooser<>();
   
   public RobotContainer() {
     opController.getLeftY();
@@ -78,8 +86,14 @@ public class RobotContainer {
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> true));
+      
+    // Add commands to the autonomous command chooser
+    autoChooser.setDefaultOption("Drive Backward Auto", driveBackwardAuto);
+    autoChooser.addOption("Drive Forward Auto", driveForwardAuto);
 
-  
+    // Put the chooser on the dashboard
+    SmartDashboard.putData(autoChooser);  
+
     configureBindings();
   }
 
@@ -136,6 +150,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new BasicAutoDriveCmd(swerveSubsystem, -0.5, 2);
+    return autoChooser.getSelected();
   }
 }
