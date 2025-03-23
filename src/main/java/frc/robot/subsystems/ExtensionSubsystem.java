@@ -76,9 +76,14 @@ public class ExtensionSubsystem extends SubsystemBase{
         return currentPos;
     }
 
+    final double LOWER_EXTEND_LIMIT = .1; // TODO figure this out
     public void manualArmExtension(double speed) {
+        double currPos = getArmExtension();
+        if (currPos <= LOWER_EXTEND_LIMIT && speed > 0) {
+            speed = 0;
+        }
         extenderMotor.set(speed);
-        desiredExtensionPos = getArmExtension();
+        desiredExtensionPos = currPos;
     }
 
     public void runExtension() {
@@ -96,7 +101,11 @@ public class ExtensionSubsystem extends SubsystemBase{
     }
 
     public void runArmToSetPoint() {
-        extensionPIDOutput = armLengthPidController.calculate(getArmExtension(), desiredExtensionPos);
+        double currPos = getArmExtension();
+        extensionPIDOutput = armLengthPidController.calculate(currPos, desiredExtensionPos);
+        if (currPos <= LOWER_EXTEND_LIMIT && extensionPIDOutput > 0) {
+            extensionPIDOutput = 0;
+        }
         extenderMotor.set(-extensionPIDOutput);
     }
     

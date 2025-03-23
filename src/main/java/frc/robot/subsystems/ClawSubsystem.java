@@ -105,7 +105,7 @@ public class ClawSubsystem extends SubsystemBase {
     public void runToPos() {
         double pidOutput = wristPidController.calculate(getWristPosition(), desiredRotationPercentage);
         pidOutput = pidOutput < 0 ? pidOutput / 4 : pidOutput;
-        wristMotor.set(-pidOutput);
+        wristMotor.set(-pidOutput*0.5);
         SmartDashboard.putNumber("claw desired position", desiredRotationPercentage);
         SmartDashboard.putNumber("claw current position", getWristPosition());
         SmartDashboard.putNumber("claw pid output", pidOutput);

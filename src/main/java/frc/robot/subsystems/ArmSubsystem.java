@@ -135,7 +135,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void runArmManual() {
-        var speed = opController.getLeftY() * 0.5;
+        var speed = opController.getLeftY() * 0.25;
         if (speed < 0 && !armSen.get()) speed = 0;
         rightMotor.set(speed); // left motor is inverted follower
         desiredArmAnglePercentage = getArmAngle();
@@ -155,7 +155,11 @@ public class ArmSubsystem extends SubsystemBase {
         double rawPID = armAnglePidController.calculate(getArmAngle(), desiredArmAnglePercentage);
         armAnglePIDOutput = rawPID < 0 ? rawPID / 2 : rawPID; // limit the speed of the arm when going down
         // armAnglePIDOutput = getArmAngle() > 0.8 ? rawPID/2 : rawPID;
-        rightMotor.set(armAnglePIDOutput);
+        if (!armSen.get() && armAnglePIDOutput < 0) {
+            rightMotor.stopMotor();
+        } else {
+            rightMotor.set(armAnglePIDOutput);
+        }
     }
 
     public void setAesiredArmAnglePercentageToCurrent() {
