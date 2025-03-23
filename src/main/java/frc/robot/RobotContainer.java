@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -130,11 +131,15 @@ public class RobotContainer {
     armToL3.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.7, ()->0.3, ()->1.0));
     armToL4.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.85, ()->1.0, ()->0.75));
 
-    armToAlgae.onTrue(new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.2, ()->0.7));
+    armToAlgae.onTrue(
+      new ParallelCommandGroup(
+        new FullArmControlCmd(armSubsystem, clawSubsystem, extensionSubsystem, ()->0.5, ()->0.2, ()->0.7),
+        clawSubsystem.getCloseClawCommand()
+    ));
 
     climbButton.whileTrue(armSubsystem.getClimbCmd());
     climbButton.whileFalse(armSubsystem.getClimbStopCmd());
-    
+  
     // Manual Controls
 
     // Manual Arm Rotation Control
