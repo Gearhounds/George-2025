@@ -20,9 +20,9 @@ public class ExtendToPercentageCmd extends Command {
     public void initialize() {
         if (setPosPercent < 0 || setPosPercent > 1) {
             // dont allow invalid %
-            extensionSystem.desiredExtensionPos = extensionSystem.getArmExtension();
+            extensionSystem.setDesiredExtension(extensionSystem.getArmExtension());
         } else {
-            extensionSystem.desiredExtensionPos = setPosPercent;
+            extensionSystem.setDesiredExtension(setPosPercent);
         }
     }
 
@@ -36,7 +36,7 @@ public class ExtendToPercentageCmd extends Command {
 
     @Override
     public boolean isFinished() {
-        return extensionSystem.armLengthPidController.atSetpoint();
+        return extensionSystem.atSetpoint();
     }
 
 }

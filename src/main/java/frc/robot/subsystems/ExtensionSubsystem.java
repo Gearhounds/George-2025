@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.Supplier;
-
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -17,17 +15,17 @@ import frc.robot.commands.DebugExtendCmd;
 import frc.robot.commands.DefaultExtensionCommand;
 import frc.robot.commands.ExtendToPercentageCmd;
 
-public class ExtensionSubsystem extends SubsystemBase{
-    public final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
+public class ExtensionSubsystem extends SubsystemBase {
+    private final SparkFlex extenderMotor = new SparkFlex(Constants.ArmConstants.kExtenderMotorID, MotorType.kBrushless);
 
-    public final PIDController armLengthPidController = new PIDController(Constants.ArmConstants.LengthkP,
+    private final PIDController armLengthPidController = new PIDController(Constants.ArmConstants.LengthkP,
                                                                           Constants.ArmConstants.LengthkI,
                                                                           Constants.ArmConstants.LengthkD);
 
     private final XboxController opController;
 
     private final double EXTENSION_SPEED = 0.5;
-    public double desiredExtensionPos;
+    private double desiredExtensionPos;
     private double extensionPIDOutput;
     
     private double retractSpeed;
@@ -93,6 +91,14 @@ public class ExtensionSubsystem extends SubsystemBase{
         } else {
             runArmToSetPoint();
         }
+    }
+
+    public void setDesiredExtension(double setPoint) {
+        desiredExtensionPos = setPoint;
+    }
+
+    public boolean atSetpoint() {
+        return armLengthPidController.atSetpoint();
     }
 
     public void runArmToSetPoint() {

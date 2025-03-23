@@ -5,24 +5,17 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.MathHelp;
@@ -32,23 +25,21 @@ import frc.robot.commands.DefaultArmCmd;
 
 public class ArmSubsystem extends SubsystemBase {
 
-    public final SparkFlex rightMotor = new SparkFlex(Constants.ArmConstants.kRightMotorID, MotorType.kBrushless);
-    public final SparkFlex leftMotor = new SparkFlex(Constants.ArmConstants.kLeftMotorID, MotorType.kBrushless);
-    public final SparkFlexConfig rightConfig = new SparkFlexConfig();
-    public final SparkFlexConfig leftConfig = new SparkFlexConfig();
+    private final SparkFlex rightMotor = new SparkFlex(Constants.ArmConstants.kRightMotorID, MotorType.kBrushless);
+    private final SparkFlex leftMotor = new SparkFlex(Constants.ArmConstants.kLeftMotorID, MotorType.kBrushless);
+    private final SparkFlexConfig rightConfig = new SparkFlexConfig();
+    private final SparkFlexConfig leftConfig = new SparkFlexConfig();
 
-    public final RelativeEncoder armEncoder = leftMotor.getEncoder();
-    public final EncoderConfig encoderConfig = new EncoderConfig();
+    private final RelativeEncoder armEncoder = leftMotor.getEncoder();
 
     private double armAnglePIDOutput; // this is the speed of the motor after being run through PID
-    public double desiredArmAnglePercentage; // this is the setpoint of the arm PID
+    private double desiredArmAnglePercentage; // this is the setpoint of the arm PID
 
     public final PIDController armAnglePidController = new PIDController(Constants.ArmConstants.AnglekP,
                                                                         Constants.ArmConstants.AnglekI,
                                                                         Constants.ArmConstants.AnglekD);
 
     public final Solenoid climbSolenoid = new Solenoid(21, PneumaticsModuleType.REVPH, 10);
-    
 
     private final XboxController opController;
 
