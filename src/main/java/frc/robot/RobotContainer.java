@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.BasicAutoDriveCmd;
@@ -68,12 +70,6 @@ public class RobotContainer {
   public DigitalInput clawSen = new DigitalInput(6);
   private final Trigger clawSensor = new Trigger(() -> clawSen.get());
 
-  // A simple auto routine that drives backward a specified time, and then stops.
-  private final Command driveBackwardAuto = new BasicAutoDriveCmd(swerveSubsystem, -0.5, 2);
-
-  // A simple auto routine that drives forward a specific time, and then stops.
-  private final Command driveForwardAuto = new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
-
   // A chooser for autonomous commands
   SendableChooser<Command> autoChooser = new SendableChooser<>();
   
@@ -86,10 +82,26 @@ public class RobotContainer {
       () -> driverLeft.getRawAxis(0), 
       () -> -driverRight.getRawAxis(0), 
       () -> true));
+
+    final Command driveBackwardCMD = new BasicAutoDriveCmd(swerveSubsystem, -0.5, 2);
+    final Command driveForwardCMD = new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2);
+    final Command clawTestCMD = new SequentialCommandGroup(
+      clawSubsystem.getOpenClawCommand(),
+      new WaitCommand(2),
+      clawSubsystem.getCloseClawCommand()
+    );
+    
+    final Command driveTestCMD = Commands.sequence(
+      new BasicAutoDriveCmd(swerveSubsystem, -0.5, 0),
+      Commands.waitSeconds(2),
+      new BasicAutoDriveCmd(swerveSubsystem, 0.5, 0)
+    );
       
     // Add commands to the autonomous command chooser
-    autoChooser.setDefaultOption("Drive Backward Auto", driveBackwardAuto);
-    autoChooser.addOption("Drive Forward Auto", driveForwardAuto);
+    autoChooser.setDefaultOption("Drive Backward Auto", driveBackwardCMD);
+    autoChooser.addOption("Drive Forward Auto", driveForwardCMD);
+    autoChooser.addOption("Claw Test Auto", clawTestCMD);
+    autoChooser.addOption("Drive Test Auto", driveTestCMD);
 
     // Put the chooser on the dashboard
     SmartDashboard.putData(autoChooser);  
