@@ -27,7 +27,7 @@ public class DebugExtendCmd extends Command {
         // } else {
         //     extensionSystem.desiredExtensionPos = setPosPercent;
         // }
-        extensionSystem.desiredExtensionPos = setPosPercent;
+        extensionSystem.setDesiredExtension(setPosPercent);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DebugExtendCmd extends Command {
     @Override
     public boolean isFinished() {
         // System.out.println("CMD Done");
-        return extensionSystem.armLengthPidController.atSetpoint();
+        return extensionSystem.atSetpoint();
         // return false;
     }
 

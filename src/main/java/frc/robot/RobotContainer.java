@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ArmRotationCmd;
 import frc.robot.commands.BasicAutoDriveCmd;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.FullArmControlCmd;
@@ -96,12 +97,19 @@ public class RobotContainer {
       Commands.waitSeconds(2),
       new BasicAutoDriveCmd(swerveSubsystem, 0.5, 0)
     );
+
+    final Command L1Auto = Commands.sequence(
+      new BasicAutoDriveCmd(swerveSubsystem, 0.5, 2),
+      // new ArmRotationCmd(armSubsystem, () -> 0.4).withTimeout(1),
+      // clawSubsystem.getOpenClawCommand()
+    );
       
     // Add commands to the autonomous command chooser
     autoChooser.setDefaultOption("Drive Backward Auto", driveBackwardCMD);
     autoChooser.addOption("Drive Forward Auto", driveForwardCMD);
     autoChooser.addOption("Claw Test Auto", clawTestCMD);
     autoChooser.addOption("Drive Test Auto", driveTestCMD);
+    autoChooser.addOption("L1 Test Auto", L1Auto);
 
     // Put the chooser on the dashboard
     SmartDashboard.putData(autoChooser);  

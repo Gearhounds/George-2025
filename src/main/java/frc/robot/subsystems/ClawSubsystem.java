@@ -124,10 +124,12 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public Command getOpenClawCommand() {
+        System.out.println("Closing Claw");
         return Commands.runOnce(() -> clawOpen());
     }
 
     public Command getCloseClawCommand() {
+        System.out.println("Closing Claw");
         return Commands.runOnce(() -> clawClose());
     }
 

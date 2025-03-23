@@ -137,8 +137,12 @@ public class ArmSubsystem extends SubsystemBase {
         rightMotor.set(armAnglePIDOutput);
     }
 
-    public void setAesiredArmAnglePercentageToCurrent() {
+    public void setDesiredArmAnglePercentageToCurrent() {
         desiredArmAnglePercentage = getArmAngle();
+    }
+    
+    public void setDesiredArmAngle(double anglePercent) {
+        desiredArmAnglePercentage = anglePercent;
     }
 
     public void climbOn() {

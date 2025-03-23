@@ -25,10 +25,10 @@ public class ArmRotationCmd extends Command {
         if (setPosPercent < 0 || setPosPercent > 1) {
             // dont allow invalid %
             setPosPercent = armSystem.getArmAngle();
-        } else {
-            armSystem.desiredArmAnglePercentage = setPosPercent;
         }
+        armSystem.setDesiredArmAngle(setPosPercent);
         stop = true;
+        System.out.println("Moving arm to " + setPosPercent);
     }
 
     @Override
@@ -39,6 +39,7 @@ public class ArmRotationCmd extends Command {
     @Override
     public void end(boolean interrupted) {
         CommandScheduler.getInstance().schedule(new DefaultArmCmd(armSystem));
+        System.out.println("Arm Done Moving");
     }
 
     @Override

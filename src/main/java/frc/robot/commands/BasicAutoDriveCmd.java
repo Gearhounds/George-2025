@@ -13,11 +13,13 @@ public class BasicAutoDriveCmd extends Command {
     private double startTime;
 
     private ChassisSpeeds speeds;
+    SwerveModuleState[] moduleStates;
 
     public BasicAutoDriveCmd(SwerveSubsystem subsystem, double forwardSpeed, double durationInSeconds) {
         this.driveSubsystem = subsystem;
         this.duration = durationInSeconds * 1000; // convert to ms
         this.speeds = new ChassisSpeeds(forwardSpeed, 0, 0);
+        this.moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
         addRequirements(subsystem);
     }
 
@@ -25,12 +27,13 @@ public class BasicAutoDriveCmd extends Command {
     public void initialize() {
         // Initialization code here
         startTime = System.currentTimeMillis();
+        System.out.println("Starting Drive Command at " + startTime);
     }
 
     @Override
     public void execute() {
         // Execution code here
-        SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+        System.out.println("Driving");
         driveSubsystem.setModuleStates(moduleStates);
     }
 
@@ -40,6 +43,7 @@ public class BasicAutoDriveCmd extends Command {
         this.speeds = new ChassisSpeeds(0, 0, 0);
         SwerveModuleState[] moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
         driveSubsystem.setModuleStates(moduleStates);
+        System.out.println("Ending Drive Command at " + System.currentTimeMillis());
     }
 
     @Override
