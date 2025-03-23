@@ -17,7 +17,7 @@ public class ResetArmCmd extends SequentialCommandGroup {
         double armZero = 0.0;
         double clawZero = 0.25;
 
-        addCommands(new ExtendToPercentageCmd(extensionSubsystem, () -> extensionZero),
+        addCommands(new ExtendToPercentageCmd(extensionSubsystem, () -> extensionZero).withTimeout(1.5),
                     new ParallelCommandGroup(
                         new ArmRotationCmd(armSubsystem, () -> armZero),
                         new WristRotationCmd(clawSubsystem, () -> clawZero)
