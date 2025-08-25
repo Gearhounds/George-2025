@@ -33,7 +33,7 @@ public class SwerveModule {
     
 
     private final RelativeEncoder driveEncoder;
-    private final RelativeEncoder turningEncoder;
+    // private final RelativeEncoder turningEncoder;
 
     private final PIDController turningPidController;
 
@@ -74,7 +74,7 @@ public class SwerveModule {
             
 
             driveEncoder = driveMotor.getEncoder();
-            turningEncoder = turningMotor.getEncoder();
+            // turningEncoder = turningMotor.getEncoder();
 
             turningPidController = new PIDController(ModuleConstants.kPTurning, ModuleConstants.kITurning, ModuleConstants.kDTurning);
             turningPidController.enableContinuousInput(-180, 180);
@@ -86,31 +86,30 @@ public class SwerveModule {
             return driveEncoder.getPosition();
         }
 
-        public double getTurningPosition() {
-            SmartDashboard.putBoolean("Running Get Turn Position", true);
-            return turningEncoder.getPosition();
-        }
+        // public double getTurningPosition() {
+        //     SmartDashboard.putBoolean("Running Get Turn Position", true);
+        //     return turningEncoder.getPosition();
+        // }
 
         public double getDriveVelocity() {
             SmartDashboard.putBoolean("Running Get Drive Velo", true);
             return driveEncoder.getVelocity();
         }
 
-        public double getTurningVelocity() {
-            SmartDashboard.putBoolean("Running Get Turn Velo", true);
-            return turningEncoder.getVelocity();
-        }
+        // public double getTurningVelocity() {
+        //     SmartDashboard.putBoolean("Running Get Turn Velo", true);
+        //     return turningEncoder.getVelocity();
+        // }
 
         public double getAbsEncoder() {
-            
             double angle = (absEncoder.getPosition() * 360)-180;
             return angle * (absEncoderReversed ? -1 : 1);
         }
 
-        public void resetEncoders() {
-            driveEncoder.setPosition(0);
-            turningEncoder.setPosition(getAbsEncoder());
-        }
+        // public void resetEncoders() {
+        //     driveEncoder.setPosition(0);
+        //     turningEncoder.setPosition(getAbsEncoder());
+        // }
         
         public SwerveModuleState getState() {
             SmartDashboard.putBoolean("Running Get States", true);
